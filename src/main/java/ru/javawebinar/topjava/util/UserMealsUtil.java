@@ -43,7 +43,7 @@ public class UserMealsUtil {
                                 TimeUtil.isBetween(
                                         userMeal.getDateTime().toLocalTime()
                                         , startTime
-                                        , endTime.plusNanos(1L))
+                                        , endTime)
                         )
                 )
                 .map(
@@ -69,7 +69,7 @@ public class UserMealsUtil {
             if (TimeUtil.isBetween(
                     time
                     , startTime
-                    , endTime.plusNanos(1L))
+                    , endTime)
                     ) {
                 LocalDateTime dateTime = userMeal.getDateTime();
                 UserMealWithExceed userMealWithExceed = new UserMealWithExceed(
