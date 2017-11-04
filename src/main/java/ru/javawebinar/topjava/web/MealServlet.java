@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.List;
@@ -39,16 +40,15 @@ public class MealServlet extends HttpServlet{
                 break;
             case "/deleteMeal":
                 log.debug("delete");
-                deleteMeal(request, response);
+                delete(request, response);
                 break;
             case "/editMeal":
                 log.debug("edit");
-                editMeals(request);
+                edit(request);
             default:
                 log.debug("default");
-                listMeals(request, response);
+                list(request, response);
         }
-
     }
 
     @Override
@@ -72,14 +72,14 @@ public class MealServlet extends HttpServlet{
                     id = Long.parseLong((String) id1);
                 }
                 if (id != null) {
-                    Meal meal = mealDAO.findMealById(id);
+                    Meal meal = mealDAO.findById(id);
                     meal.setCalories(calories);
                     meal.setDateTime(dateTime);
                     meal.setDescription(description);
-                    mealDAO.editMeal(meal);
+                    mealDAO.edit(meal);
                 } else {
                     Meal meal = new Meal(dateTime, description, calories);
-                    mealDAO.addMeal(meal);
+                    mealDAO.add(meal);
                 }
                 request.setAttribute("errorSaving", false);
             } catch (DateTimeParseException | NumberFormatException ex) {
@@ -91,23 +91,24 @@ public class MealServlet extends HttpServlet{
 
     private void resetToDefault(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         MealProvider.resetToDefautl();
-        response.sendRedirect("./meals");
+        response.sendRedirect("meals");
     }
-    private void deleteMeal(HttpServletRequest request, HttpServletResponse response) throws IOException {
+
+    private void delete(HttpServletRequest request, HttpServletResponse response) throws IOException {
         Object id = request.getParameter("id");
         if (id != null) {
             Long mealId = Long.parseLong((String) request.getParameter("id"));
-            mealDAO.deleteMeal(mealDAO.findMealById(mealId));
+            mealDAO.delete(mealDAO.findById(mealId));
         }
-        response.sendRedirect("./meals");
+        response.sendRedirect("meals");
     }
 
-    private void editMeals(HttpServletRequest request) {
+    private void edit(HttpServletRequest request) {
         Object id = request.getParameter("id");
         Meal meal = null;
         if (id != null) {
             Long mealId = Long.parseLong((String) request.getParameter("id"));
-            meal = mealDAO.findMealById(mealId);
+            meal = mealDAO.findById(mealId);
         }
         if (meal == null) {
             request.setAttribute("newMeal", true);
@@ -116,12 +117,12 @@ public class MealServlet extends HttpServlet{
         }
     }
 
-    private void listMeals(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    private void list(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Object calories = request.getParameter("caloriesPerDay");
         int caloriesPerDay = (calories == null) ? defalutCaloriesPerDay: Integer.parseInt((String) calories);
         defalutCaloriesPerDay = caloriesPerDay;
         log.debug("caloriesPerDay = " + caloriesPerDay);
-        List<MealWithExceed> mealWithExceeds = MealsUtil.getFilteredWithExceeded(mealDAO.findAllMeal(), caloriesPerDay);
+        List<MealWithExceed> mealWithExceeds = MealsUtil.getFilteredWithExceeded(mealDAO.findAll(), LocalTime.MIN, LocalTime.MAX, caloriesPerDay);
         request.setAttribute("caloriesPerDay", caloriesPerDay);
         request.setAttribute("mealsWithExceeds", mealWithExceeds);
         request.setAttribute("dateTimeFormatter", formatter);
