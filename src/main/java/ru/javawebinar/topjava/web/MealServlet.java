@@ -23,8 +23,9 @@ import java.util.List;
 @Slf4j
 public class MealServlet extends HttpServlet{
 
+    private static final int DEFAULT_CALORIES_PER_DAY = 2000;
     private static MealDAO mealDAO = new MealDAOSimpleImpl();
-    private static int defalutCaloriesPerDay = 2000;
+    private static int defalutCaloriesPerDay = DEFAULT_CALORIES_PER_DAY;
     private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
 
     @Override
@@ -84,6 +85,7 @@ public class MealServlet extends HttpServlet{
                 request.setAttribute("errorSaving", false);
             } catch (DateTimeParseException | NumberFormatException ex) {
                 response.sendRedirect("meals?errorSaving=true");
+                return;
 //                request.setAttribute("errorSaving", true);
             }
         }
@@ -121,7 +123,12 @@ public class MealServlet extends HttpServlet{
 
     private void list(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Object calories = request.getParameter("caloriesPerDay");
-        int caloriesPerDay = (calories == null) ? defalutCaloriesPerDay: Integer.parseInt((String) calories);
+        int caloriesPerDay;
+        try {
+            caloriesPerDay = (calories == null) ? defalutCaloriesPerDay : Integer.parseInt((String) calories);
+        } catch (NumberFormatException ex) {
+            caloriesPerDay = DEFAULT_CALORIES_PER_DAY;
+        }
         defalutCaloriesPerDay = caloriesPerDay;
         log.debug("caloriesPerDay = " + caloriesPerDay);
         List<MealWithExceed> mealWithExceeds = MealsUtil.getFilteredWithExceeded(mealDAO.findAll(), LocalTime.MIN, LocalTime.MAX, caloriesPerDay);

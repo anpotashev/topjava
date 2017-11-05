@@ -5,11 +5,17 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <title>Title</title>
+    <%--<link href="${pageContext.request.contextPath}/css/styles.css" rel="stylesheet">--%>
+    <style type="text/css">
+        <%@include file="css/styles.css"%>
+    </style>
 </head>
 <body>
     <h2>Meals</h2>
-    <p>caloriesPerDay = ${caloriesPerDay}</p>
-    <a href="resetToDefault">reset to default</a>
+    <form action="meals" method="get">
+        <p>caloriesPerDay: <input type="number" class="caloriesPerDay" name="caloriesPerDay" value="${caloriesPerDay}"/><input type="submit"/></p>
+    </form>
+    <a href="resetToDefault" class="button">reset to default</a>
     <c:if test="${not empty mealsWithExceeds}" >
         <table>
             <thead>
@@ -23,20 +29,20 @@
             </thead>
             <tbody>
                 <c:forEach var="meal" items="${mealsWithExceeds}">
-                    <tr style="color: ${meal.exceed ? 'red' : 'green'}">
+                    <tr class="${meal.exceed ? 'redcolor' : 'greencolor'}"/>
                         <td>${dateTimeFormatter.format(meal.dateTime)}</td>
                         <td>${meal.description}</td>
                         <td>${meal.calories}</td>
-                        <td><a href="editMeal?id=${meal.mealId}">edit</a></td>
-                        <td><a href="deleteMeal?id=${meal.mealId}">delete</a></td>
+                        <td><a href="editMeal?id=${meal.mealId}" class="button">edit</a></td>
+                        <td><a href="deleteMeal?id=${meal.mealId}" class="button">delete</a></td>
                     </tr>
                 </c:forEach>
             </tbody>
         </table>
-        <td><a href="editMeal">add</a></td>
+        <td><a href="editMeal" class="button">add</a></td>
         <hr>
         <c:if test="${not empty errorSaving}" >
-            <h3 style="color: red">Error saving meal</h3>
+            <h3 class="errormessage">Error saving meal</h3>
         </c:if>
         <c:if test="${not empty meal or newMeal}">
         <form action="meals" method="post">
@@ -46,7 +52,7 @@
             <table>
                 <tr>
                     <td>datetime: </td>
-                    <td><input type="datetime" value="${newMeal ? "" : dateTimeFormatter.format(meal.dateTime)}" name="datetime"
+                    <td><input type="text" value="${newMeal ? "" : dateTimeFormatter.format(meal.dateTime)}" name="datetime"
                         placeholder="дд.ММ.гггг чч:мм"/></td>
                 </tr>
                 <tr>
@@ -56,7 +62,7 @@
                 </tr>
                 <tr>
                     <td>calories: </td>
-                    <td><input type="text" value="${newMeal ? 0 : meal.calories}" name="calories"
+                    <td><input type="number" value="${newMeal ? 0 : meal.calories}" name="calories"
                                placeholder="калории"/></td>
                 </tr>
                 <tr><td><input type="submit" value="${newMeal ? "create" : "save"}"/></td><td></td></tr>
