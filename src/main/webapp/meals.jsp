@@ -13,7 +13,8 @@
 <body>
     <h2>Meals</h2>
     <form action="meals" method="get">
-        <p>caloriesPerDay: <input type="number" class="caloriesPerDay" name="caloriesPerDay" value="${caloriesPerDay}"/><input type="submit"/></p>
+        <p>caloriesPerDay: <input type="number" class="caloriesPerDay" name="caloriesPerDay" value="${caloriesPerDay}"/>
+            <input type="submit" value="set"/></p>
     </form>
     <a href="resetToDefault" class="button">reset to default</a>
     <c:if test="${not empty mealsWithExceeds}" >
