@@ -29,49 +29,56 @@
                 </tr>
             </thead>
             <tbody>
-                <c:forEach var="meal" items="${mealsWithExceeds}">
-                    <tr class="${meal.exceed ? 'redcolor' : 'greencolor'}"/>
-                        <td>${dateTimeFormatter.format(meal.dateTime)}</td>
-                        <td>${meal.description}</td>
-                        <td>${meal.calories}</td>
-                        <td><a href="editMeal?id=${meal.mealId}" class="button">edit</a></td>
-                        <td><a href="deleteMeal?id=${meal.mealId}" class="button">delete</a></td>
+                <c:forEach var="meal1" items="${mealsWithExceeds}">
+                    <c:set var="isEdit" value="${(not empty meal) and (meal1.mealId eq meal.id)}"/>
+                    <c:choose>
+                    <c:when test="${isEdit}" >
+                        <tr>
+                        <form action="meals" method="post">
+                            <input type="hidden" value="${meal.id}" name="id"/>
+                            <td><input type="text" value="${newMeal ? "" : dateTimeFormatter.format(meal1.dateTime)}" name="datetime"
+                                       placeholder="дд.ММ.гггг чч:мм"/></td>
+                            <td><input type="text" value="${newMeal ? "" : meal1.description}" name="description"
+                                       placeholder="описание"/></td>
+                            <td><input type="number" value="${newMeal ? 0 : meal1.calories}" name="calories"
+                                       placeholder="калории"/></td>
+                            <td><input type="submit" value="save"/><a href="meals" class="button">cancel</a></td>
+                            <td><a href="deleteMeal?id=${meal1.mealId}" class="button">delete</a></td>
+                        </form>
+                        </tr>
+                    </c:when>
+                    <c:otherwise>
+                    <tr class="${meal1.exceed ? 'redcolor' : 'greencolor'}"/>
+                        <td>${dateTimeFormatter.format(meal1.dateTime)}</td>
+                        <td>${meal1.description}</td>
+                        <td>${meal1.calories}</td>
+                        <td><a href="editMeal?id=${meal1.mealId}" class="button">edit</a></td>
+                        <td><a href="deleteMeal?id=${meal1.mealId}" class="button">delete</a></td>
                     </tr>
+                    </c:otherwise>
+                    </c:choose>
                 </c:forEach>
+                <c:if test="${not empty newMeal}" >
+                    <form action="meals" method="post">
+                    <td><input type="text" value="${newMeal ? "" : dateTimeFormatter.format(meal.dateTime)}" name="datetime"
+                               placeholder="дд.ММ.гггг чч:мм"/></td>
+                        <td><input type="text" value="${newMeal ? "" : meal.description}" name="description"
+                                   placeholder="описание"/></td>
+                        <td><input type="number" value="${newMeal ? 0 : meal.calories}" name="calories"
+                                   placeholder="калории"/></td>
+                    <td><input type="submit" value="create"/></td><td></td>
+                    </tr>
+                    </form>
+                </c:if>
             </tbody>
         </table>
-        <td><a href="editMeal" class="button">add</a></td>
+        <c:if test="${empty newMeal}" >
+            <a href="editMeal" class="button">add</a>
+        </c:if>
         <hr>
         <c:if test="${not empty errorSaving}" >
             <h3 class="errormessage">Error saving meal</h3>
         </c:if>
-        <c:if test="${not empty meal or newMeal}">
-        <form action="meals" method="post">
-            <c:if test="${not newMeal}">
-                <input type="hidden" value="${meal.id}" name="id"/>
-            </c:if>
-            <table>
-                <tr>
-                    <td>datetime: </td>
-                    <td><input type="text" value="${newMeal ? "" : dateTimeFormatter.format(meal.dateTime)}" name="datetime"
-                        placeholder="дд.ММ.гггг чч:мм"/></td>
-                </tr>
-                <tr>
-                    <td>description: </td>
-                    <td><input type="text" value="${newMeal ? "" : meal.description}" name="description"
-                        placeholder="описание"/></td>
-                </tr>
-                <tr>
-                    <td>calories: </td>
-                    <td><input type="number" value="${newMeal ? 0 : meal.calories}" name="calories"
-                               placeholder="калории"/></td>
-                </tr>
-                <tr><td><input type="submit" value="${newMeal ? "create" : "save"}"/></td><td></td></tr>
-            </table>
-
-        </form>
-        </c:if>
-
     </c:if>
 </body>
 </html>
