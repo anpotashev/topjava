@@ -3,7 +3,7 @@ package ru.javawebinar.topjava.web;
 import lombok.extern.slf4j.Slf4j;
 import ru.javawebinar.topjava.dao.MealDAO;
 import ru.javawebinar.topjava.dao.MealDAOSimpleImpl;
-import ru.javawebinar.topjava.dao.MealProvider;
+import ru.javawebinar.topjava.dao.MealInMemoryCRUDImpl;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.model.MealWithExceed;
 import ru.javawebinar.topjava.util.MealsUtil;
@@ -83,14 +83,16 @@ public class MealServlet extends HttpServlet{
                 }
                 request.setAttribute("errorSaving", false);
             } catch (DateTimeParseException | NumberFormatException ex) {
-                request.setAttribute("errorSaving", true);
+                response.sendRedirect("meals?errorSaving=true");
+//                request.setAttribute("errorSaving", true);
             }
         }
-        doGet(request, response);
+        response.sendRedirect("meals");
+//        doGet(request, response);
     }
 
     private void resetToDefault(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        MealProvider.resetToDefautl();
+        MealInMemoryCRUDImpl.resetToDefault();
         response.sendRedirect("meals");
     }
 
@@ -126,6 +128,9 @@ public class MealServlet extends HttpServlet{
         request.setAttribute("caloriesPerDay", caloriesPerDay);
         request.setAttribute("mealsWithExceeds", mealWithExceeds);
         request.setAttribute("dateTimeFormatter", formatter);
+        if (request.getParameter("errorSaving") != null) {
+            request.setAttribute("errorSaving", true);
+        }
         getServletContext().getRequestDispatcher("/meals.jsp").forward(request,response);
     }
 }

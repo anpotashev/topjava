@@ -35,7 +35,7 @@
         </table>
         <td><a href="editMeal">add</a></td>
         <hr>
-        <c:if test="${errorSaving}" >
+        <c:if test="${not empty errorSaving}" >
             <h3 style="color: red">Error saving meal</h3>
         </c:if>
         <c:if test="${not empty meal or newMeal}">
@@ -46,7 +46,7 @@
             <table>
                 <tr>
                     <td>datetime: </td>
-                    <td><input type="text" value="${newMeal ? "" : dateTimeFormatter.format(meal.dateTime)}" name="datetime"
+                    <td><input type="datetime" value="${newMeal ? "" : dateTimeFormatter.format(meal.dateTime)}" name="datetime"
                         placeholder="дд.ММ.гггг чч:мм"/></td>
                 </tr>
                 <tr>
