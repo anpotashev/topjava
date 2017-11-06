@@ -1,9 +1,8 @@
 package ru.javawebinar.topjava.web;
 
 import lombok.extern.slf4j.Slf4j;
-import ru.javawebinar.topjava.dao.MealDAO;
-import ru.javawebinar.topjava.dao.MealDAOSimpleImpl;
-import ru.javawebinar.topjava.dao.MealInMemoryCRUDImpl;
+import ru.javawebinar.topjava.dao.DAO;
+import ru.javawebinar.topjava.dao.MealDAOInMemoryImpl;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.model.MealWithExceed;
 import ru.javawebinar.topjava.util.MealsUtil;
@@ -24,26 +23,35 @@ import java.util.List;
 public class MealServlet extends HttpServlet{
 
     private static final int DEFAULT_CALORIES_PER_DAY = 2000;
-    private static MealDAO mealDAO = new MealDAOSimpleImpl();
+    private DAO<Meal> mealDAO;
     private static int defalutCaloriesPerDay = DEFAULT_CALORIES_PER_DAY;
     private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
 
+    public void init() {
+        mealDAO = MealDAOInMemoryImpl.getDAO();
+    }
+
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.setCharacterEncoding("UTF-8");
         log.debug("mealServler->doGet");
-        String servletUrl = request.getServletPath();
-        log.debug(servletUrl);
-        switch (servletUrl) {
-            case "/resetToDefault":
+        request.setCharacterEncoding("UTF-8");
+
+        String action = request.getParameter("action");
+        action = action==null ? "" : action;
+        switch (action) {
+            case "resetToDefault":
                 log.debug("reset to default");
                 resetToDefault(request, response);
                 break;
-            case "/deleteMeal":
+            case "delete":
                 log.debug("delete");
                 delete(request, response);
                 break;
-            case "/editMeal":
+            case "create":
+                log.debug("delete");
+                create(request);
+//                break;
+            case "edit":
                 log.debug("edit");
                 edit(request);
             default:
@@ -52,49 +60,45 @@ public class MealServlet extends HttpServlet{
         }
     }
 
+
+
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
+
         Object dateTime1 = request.getParameter("datetime");
         Object description1 = request.getParameter("description");
         Object calories1 = request.getParameter("calories");
         Object id1 = request.getParameter("id");
-        log.debug("datetime " + new Boolean(dateTime1 == null) + " value " + (String) dateTime1);
-        log.debug("description " + new Boolean(description1 == null)+ " value " + (String) description1);
-        log.debug("calories " + new Boolean(calories1 == null) + " value " + (String) calories1);
-        log.debug("id " + new Boolean(id1 == null) + " value " + (String) id1);
+
+        log.debug("datetime {} value {}", dateTime1 == null, (String) dateTime1);
+        log.debug("description {} value {}", description1 == null, (String) description1);
+        log.debug("calories {} value {}", calories1 == null, (String) calories1);
+        log.debug("id {} value {}", id1 == null, (String) id1);
+
         if (dateTime1 != null && description1 != null && calories1 != null) {
             try {
                 LocalDateTime dateTime = LocalDateTime.parse((String) dateTime1, formatter);
                 String description = (String) description1;
                 Integer calories = Integer.parseInt((String) calories1);
-                Long id = null;
-                if (id1 != null) {
-                    id = Long.parseLong((String) id1);
-                }
+                Long id = id1==null ? null : Long.parseLong((String) id1);
+
+                Meal meal = new Meal(dateTime, description, calories);
                 if (id != null) {
-                    Meal meal = mealDAO.findById(id);
-                    meal.setCalories(calories);
-                    meal.setDateTime(dateTime);
-                    meal.setDescription(description);
-                    mealDAO.edit(meal);
-                } else {
-                    Meal meal = new Meal(dateTime, description, calories);
-                    mealDAO.add(meal);
+                    meal.setId(id);
                 }
-                request.setAttribute("errorSaving", false);
+                mealDAO.merge(meal);
             } catch (DateTimeParseException | NumberFormatException ex) {
                 response.sendRedirect("meals?errorSaving=true");
                 return;
-//                request.setAttribute("errorSaving", true);
             }
         }
         response.sendRedirect("meals");
-//        doGet(request, response);
     }
 
     private void resetToDefault(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        MealInMemoryCRUDImpl.resetToDefault();
+        MealDAOInMemoryImpl.resetToDefault();
+        defalutCaloriesPerDay = DEFAULT_CALORIES_PER_DAY;
         response.sendRedirect("meals");
     }
 
@@ -102,9 +106,13 @@ public class MealServlet extends HttpServlet{
         Object id = request.getParameter("id");
         if (id != null) {
             Long mealId = Long.parseLong((String) request.getParameter("id"));
-            mealDAO.delete(mealDAO.findById(mealId));
+            mealDAO.delete(mealId);
         }
         response.sendRedirect("meals");
+    }
+
+    private void create(HttpServletRequest request) {
+        request.setAttribute("newMeal", true);
     }
 
     private void edit(HttpServletRequest request) {
@@ -113,10 +121,6 @@ public class MealServlet extends HttpServlet{
         if (id != null) {
             Long mealId = Long.parseLong((String) request.getParameter("id"));
             meal = mealDAO.findById(mealId);
-        }
-        if (meal == null) {
-            request.setAttribute("newMeal", true);
-        } else {
             request.setAttribute("meal", meal);
         }
     }
@@ -130,11 +134,14 @@ public class MealServlet extends HttpServlet{
             caloriesPerDay = DEFAULT_CALORIES_PER_DAY;
         }
         defalutCaloriesPerDay = caloriesPerDay;
-        log.debug("caloriesPerDay = " + caloriesPerDay);
+        log.debug("caloriesPerDay = {}", caloriesPerDay);
+
         List<MealWithExceed> mealWithExceeds = MealsUtil.getFilteredWithExceeded(mealDAO.findAll(), LocalTime.MIN, LocalTime.MAX, caloriesPerDay);
+
         request.setAttribute("caloriesPerDay", caloriesPerDay);
         request.setAttribute("mealsWithExceeds", mealWithExceeds);
         request.setAttribute("dateTimeFormatter", formatter);
+
         if (request.getParameter("errorSaving") != null) {
             request.setAttribute("errorSaving", true);
         }
