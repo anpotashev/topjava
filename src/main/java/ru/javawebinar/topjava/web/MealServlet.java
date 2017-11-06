@@ -71,10 +71,10 @@ public class MealServlet extends HttpServlet{
         Object calories1 = request.getParameter("calories");
         Object id1 = request.getParameter("id");
 
-        log.debug("datetime {} value {}", dateTime1 == null, (String) dateTime1);
-        log.debug("description {} value {}", description1 == null, (String) description1);
-        log.debug("calories {} value {}", calories1 == null, (String) calories1);
-        log.debug("id {} value {}", id1 == null, (String) id1);
+//        log.debug("datetime {} value {}", dateTime1 == null, (String) dateTime1);
+//        log.debug("description {} value {}", description1 == null, (String) description1);
+//        log.debug("calories {} value {}", calories1 == null, (String) calories1);
+//        log.debug("id {} value {}", id1 == null, (String) id1);
 
         if (dateTime1 != null && description1 != null && calories1 != null) {
             try {

@@ -1,12 +1,9 @@
 package ru.javawebinar.topjava.dao;
 
-import lombok.extern.slf4j.Slf4j;
-
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-@Slf4j
 public abstract class AbstractDAOInMemory<T> implements DAO<T> {
 
     abstract Map<Long, T> getTMap();

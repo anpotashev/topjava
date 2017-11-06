@@ -1,6 +1,5 @@
 package ru.javawebinar.topjava.dao;
 
-import lombok.extern.slf4j.Slf4j;
 import ru.javawebinar.topjava.model.Meal;
 
 import java.time.LocalDateTime;
@@ -9,7 +8,6 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
-@Slf4j
 public class MealDAOInMemoryImpl extends AbstractDAOInMemory<Meal> {
 
     private static AtomicLong counter = new AtomicLong(0L);
@@ -20,8 +18,6 @@ public class MealDAOInMemoryImpl extends AbstractDAOInMemory<Meal> {
     static {
         resetToDefault();
     }
-
-
 
     public static DAO<Meal> getDAO() {
         return mealDAOImpl;

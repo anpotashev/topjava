@@ -7,17 +7,16 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
+@Getter
 public class Meal {
-    @Getter
+
     private LocalDateTime dateTime;
 
-    @Getter
     private String description;
 
-    @Getter
     private int calories;
 
-    @Getter @Setter
+    @Setter
     private long id;
 
     public Meal(LocalDateTime dateTime, String description, int calories) {
