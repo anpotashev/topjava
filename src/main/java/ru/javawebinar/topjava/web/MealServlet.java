@@ -2,7 +2,7 @@ package ru.javawebinar.topjava.web;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.ApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.GenericXmlApplicationContext;
 import ru.javawebinar.topjava.AuthorizedUser;
 import ru.javawebinar.topjava.model.Meal;
@@ -22,12 +22,18 @@ public class MealServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(MealServlet.class);
 
     private MealRestController mealRestController;
+    private ConfigurableApplicationContext ctx;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
-        ApplicationContext ctx = new GenericXmlApplicationContext("spring/spring-app.xml");
+        ctx = new GenericXmlApplicationContext("spring/spring-app.xml");
         mealRestController = ctx.getBean(MealRestController.class);
+    }
+
+    @Override
+    public void destroy() {
+        ctx.close();
     }
 
     @Override
@@ -40,9 +46,7 @@ public class MealServlet extends HttpServlet {
             Meal meal = new Meal(id.isEmpty() ? null : Integer.valueOf(id),
                     LocalDateTime.parse(request.getParameter("dateTime")),
                     request.getParameter("description"),
-                    Integer.valueOf(request.getParameter("calories")),
-                    2
-            );
+                    Integer.valueOf(request.getParameter("calories")));
 
             log.info(meal.isNew() ? "Create {}" : "Update {}", meal);
             mealRestController.save(meal);
@@ -52,14 +56,6 @@ public class MealServlet extends HttpServlet {
             AuthorizedUser.getDateTimeFilter().setEndDate(request.getParameter("endDate"));
             AuthorizedUser.getDateTimeFilter().setStartTime(request.getParameter("startTime"));
             AuthorizedUser.getDateTimeFilter().setEndTime(request.getParameter("endTime"));
-
-//            StringBuilder builder = new StringBuilder("meals")
-//                    .append("?startDate="+startDate)
-//                    .append("&endDate="+endDate)
-//                    .append("&startTime="+startTime)
-//                    .append("&endTime="+endTime);
-//            response.sendRedirect(builder.toString());
-//            return;
         }
         response.sendRedirect("meals");
     }
@@ -78,9 +74,7 @@ public class MealServlet extends HttpServlet {
             case "create":
             case "update":
                 final Meal meal = "create".equals(action) ?
-                        new Meal(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES), "", 1000,
-                                2
-                        ) :
+                        new Meal(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES), "", 1000) :
                         mealRestController.get(getId(request));
                 request.setAttribute("meal", meal);
                 request.getRequestDispatcher("/mealForm.jsp").forward(request, response);

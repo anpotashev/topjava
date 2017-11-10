@@ -3,7 +3,6 @@ package ru.javawebinar.topjava.repository.mock;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import ru.javawebinar.topjava.model.AbstractNamedEntity;
-import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.UserRepository;
@@ -75,8 +74,5 @@ public class InMemoryUserRepositoryImpl implements UserRepository {
                 .findFirst()
                 .orElse(null);
     }
-    
-    private boolean checkUser(int userId, Meal meal) {
-        return meal.getUserId() == userId;
-    }
+
 }

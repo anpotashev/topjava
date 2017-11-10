@@ -7,28 +7,27 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.Month;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
 public class MealsUtil {
-    public static final List<Meal> MEALS = Arrays.asList(
-            new Meal(LocalDateTime.of(2015, Month.MAY, 30, 10, 0), "Завтрак Админа", 500, 1),
-            new Meal(LocalDateTime.of(2015, Month.MAY, 30, 13, 0), "Обед Админа", 1000, 1),
-            new Meal(LocalDateTime.of(2015, Month.MAY, 30, 20, 0), "Ужин Админа", 500, 1),
-            new Meal(LocalDateTime.of(2015, Month.MAY, 31, 10, 0), "Завтрак Админа", 1000, 1),
-            new Meal(LocalDateTime.of(2015, Month.MAY, 31, 13, 0), "Обед Админа", 500, 1),
-            new Meal(LocalDateTime.of(2015, Month.MAY, 31, 20, 0), "Ужин Админа", 510, 1),
-            new Meal(LocalDateTime.of(2015, Month.MAY, 30, 10, 0), "Завтрак Пользователя", 500, 2),
-            new Meal(LocalDateTime.of(2015, Month.MAY, 30, 13, 0), "Обед Пользователя", 1000, 2),
-            new Meal(LocalDateTime.of(2015, Month.MAY, 30, 20, 0), "Ужин Пользователя", 500, 2),
-            new Meal(LocalDateTime.of(2015, Month.MAY, 31, 10, 0), "Завтрак Пользователя", 1000, 2),
-            new Meal(LocalDateTime.of(2015, Month.MAY, 31, 13, 0), "Обед Пользователя", 500, 2),
-            new Meal(LocalDateTime.of(2015, Month.MAY, 31, 20, 0), "Ужин Пользователя", 510, 2)
+
+    public static final List<Map.Entry<Integer, Meal>> MEALS = Arrays.asList(
+                    new AbstractMap.SimpleEntry(1, new Meal(LocalDateTime.of(2015, Month.MAY, 30, 10, 0), "Завтрак Админа", 500)),
+                    new AbstractMap.SimpleEntry(1, new Meal(LocalDateTime.of(2015, Month.MAY, 30, 13, 0), "Обед Админа", 1000)),
+                    new AbstractMap.SimpleEntry(1, new Meal(LocalDateTime.of(2015, Month.MAY, 30, 20, 0), "Ужин Админа", 500)),
+                    new AbstractMap.SimpleEntry(1, new Meal(LocalDateTime.of(2015, Month.MAY, 31, 10, 0), "Завтрак Админа", 1000)),
+                    new AbstractMap.SimpleEntry(1, new Meal(LocalDateTime.of(2015, Month.MAY, 31, 13, 0), "Обед Админа", 500)),
+                    new AbstractMap.SimpleEntry(1, new Meal(LocalDateTime.of(2015, Month.MAY, 31, 20, 0), "Ужин Админа", 510)),
+                    new AbstractMap.SimpleEntry(2, new Meal(LocalDateTime.of(2015, Month.MAY, 30, 10, 0), "Завтрак Пользователя", 500)),
+                    new AbstractMap.SimpleEntry(2, new Meal(LocalDateTime.of(2015, Month.MAY, 30, 13, 0), "Обед Пользователя", 1000)),
+                    new AbstractMap.SimpleEntry(2, new Meal(LocalDateTime.of(2015, Month.MAY, 30, 20, 0), "Ужин Пользователя", 500)),
+                    new AbstractMap.SimpleEntry(2, new Meal(LocalDateTime.of(2015, Month.MAY, 31, 10, 0), "Завтрак Пользователя", 1000)),
+                    new AbstractMap.SimpleEntry(2, new Meal(LocalDateTime.of(2015, Month.MAY, 31, 13, 0), "Обед Пользователя", 500)),
+                    new AbstractMap.SimpleEntry(2, new Meal(LocalDateTime.of(2015, Month.MAY, 31, 20, 0), "Ужин Пользователя", 510))
+
     );
 
     public static final int DEFAULT_CALORIES_PER_DAY = 2000;
@@ -114,4 +113,5 @@ public class MealsUtil {
         return values.stream().flatMap(identity()).collect(toList());
     }
 */
+
 }

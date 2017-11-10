@@ -2,11 +2,12 @@ package ru.javawebinar.topjava.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.javawebinar.topjava.DateTimeFilter;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
+import ru.javawebinar.topjava.to.MealWithExceed;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
-import java.util.LinkedList;
 import java.util.List;
 
 import static ru.javawebinar.topjava.util.ValidationUtil.checkNotFoundWithIdUserId;
@@ -16,11 +17,6 @@ public class MealServiceImpl implements MealService {
 
     @Autowired
     private MealRepository repository;
-
-    @Override
-    public Meal create(Meal meal) {
-        return repository.save(meal, meal.getUserId());
-    }
 
     @Override
     public void delete(int id, int userId) throws NotFoundException {
@@ -33,13 +29,19 @@ public class MealServiceImpl implements MealService {
     }
 
     @Override
-    public void update(Meal meal, int userId) {
-        repository.save(meal, userId);
+    public Meal save(Meal meal, int userId) throws NotFoundException {
+        int id = meal.isNew() ? -1 : meal.getId();
+        return checkNotFoundWithIdUserId(repository.save(meal, userId), id, userId);
     }
 
     @Override
-    public List<Meal> getAll(int userId) {
-        return new LinkedList<>(repository.getAll(userId));
+    public List<MealWithExceed> getAll(int userId, DateTimeFilter dateTimeFilter, int caloriesPerDay) {
+        return repository.getAll(userId, dateTimeFilter, caloriesPerDay);
+    }
+
+    @Override
+    public List<MealWithExceed> getAll(int userId, int caloriesPerDay) {
+        return repository.getAll(userId, caloriesPerDay);
     }
 
 }

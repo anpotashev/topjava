@@ -1,11 +1,15 @@
 package ru.javawebinar.topjava.repository.mock;
 
 import org.springframework.stereotype.Repository;
+import ru.javawebinar.topjava.DateTimeFilter;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
+import ru.javawebinar.topjava.to.MealWithExceed;
+import ru.javawebinar.topjava.util.DateTimeUtil;
 import ru.javawebinar.topjava.util.MealsUtil;
 
-import java.util.Collection;
+import java.time.LocalDate;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -22,16 +26,17 @@ public class InMemoryMealRepositoryImpl implements MealRepository {
         MealsUtil.MEALS.forEach(this::save);
     }
 
-
-    /*just for simplification of init block */
-    private void save(Meal meal) {
-        save(meal, meal.getUserId());
+    private Meal save(Map.Entry<Integer, Meal> userAndMeal) {
+        return save(userAndMeal.getValue(), userAndMeal.getKey());
     }
 
     @Override
     public Meal save(Meal meal, int userId) {
         if (meal.isNew()) {
             meal.setId(counter.incrementAndGet());
+        } else {
+            if (getUserMealsRepository(userId).get(meal.getId()) == null)
+                return null;
         }
         getUserMealsRepository(userId).put(meal.getId(), meal);
         return meal;
@@ -48,10 +53,17 @@ public class InMemoryMealRepositoryImpl implements MealRepository {
     }
 
     @Override
-    public Collection<Meal> getAll(int userId) {
-        return repository.get(userId).values().stream()
+    public List<MealWithExceed> getAll(int userId, DateTimeFilter dateTimeFilter, int caloriesPerDay) {
+        return MealsUtil.getFilteredWithExceeded(
+                getUserMealsRepository(userId).values().stream()
+                .filter(s -> checkDate(s, dateTimeFilter))
                 .sorted(comparing(Meal::getDateTime).reversed())
-                .collect(toList());
+                .collect(toList()), dateTimeFilter.getStartTime(), dateTimeFilter.getEndTime(), caloriesPerDay);
+    }
+
+    @Override
+    public List<MealWithExceed> getAll(int userId, int caloriesPerDay) {
+        return getAll(userId, new DateTimeFilter(), caloriesPerDay);
     }
 
     private Map<Integer, Meal> getUserMealsRepository(int userId) {
@@ -61,6 +73,15 @@ public class InMemoryMealRepositoryImpl implements MealRepository {
             repository.put(userId, result);
         }
         return result;
+    }
+
+    private static boolean checkDate(Meal meal, DateTimeFilter dateTimeFilter) {
+        LocalDate checkDate = meal.getDate();
+        return DateTimeUtil.isBetween(
+                meal.getDateTime().toLocalDate()
+                , dateTimeFilter.getStartDate()
+                , dateTimeFilter.getEndDate()
+        );
     }
 }
 
