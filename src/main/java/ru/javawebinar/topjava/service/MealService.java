@@ -17,6 +17,8 @@ public interface MealService {
 
     Meal save(Meal meal, int userId) throws NotFoundException;
 
+    Meal create(Meal meal, int userId);
+
     List<MealWithExceed> getAll(int userId, DateTimeFilter dateTimeFilter, int caloriesPerDay);
 
     List<MealWithExceed> getAll(int userId, int caloriesPerDay);

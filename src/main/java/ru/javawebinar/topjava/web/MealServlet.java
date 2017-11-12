@@ -4,7 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.GenericXmlApplicationContext;
-import ru.javawebinar.topjava.AuthorizedUser;
+import ru.javawebinar.topjava.DateTimeFilter;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.web.meal.MealRestController;
 
@@ -51,12 +51,14 @@ public class MealServlet extends HttpServlet {
             log.info(meal.isNew() ? "Create {}" : "Update {}", meal);
             mealRestController.save(meal);
         }
-        if (action.equals("filter")) {
-            AuthorizedUser.getDateTimeFilter().setStartDate(request.getParameter("startDate"));
-            AuthorizedUser.getDateTimeFilter().setEndDate(request.getParameter("endDate"));
-            AuthorizedUser.getDateTimeFilter().setStartTime(request.getParameter("startTime"));
-            AuthorizedUser.getDateTimeFilter().setEndTime(request.getParameter("endTime"));
-        }
+//        if (action.equals("filter")) {
+//            DateTimeFilter filter = new DateTimeFilter();
+//            filter.setStartDate(request.getParameter("startDate"));
+//            filter.setEndDate(request.getParameter("endDate"));
+//            filter.setStartTime(request.getParameter("startTime"));
+//            filter.setEndTime(request.getParameter("endTime"));
+////            request.setAttribute("filter", filter);
+//        }
         response.sendRedirect("meals");
     }
 
@@ -82,8 +84,14 @@ public class MealServlet extends HttpServlet {
             case "all":
             default:
                 log.info("getAll");
-                request.setAttribute("meals",mealRestController.getAll());
-                request.setAttribute("dateTimeFilter", AuthorizedUser.getDateTimeFilter());
+                DateTimeFilter filter = new DateTimeFilter();
+                filter.setStartDate(request.getParameter("startDate"));
+                filter.setEndDate(request.getParameter("endDate"));
+                filter.setStartTime(request.getParameter("startTime"));
+                filter.setEndTime(request.getParameter("endTime"));
+
+                request.setAttribute("meals",mealRestController.getAll(filter));
+                request.setAttribute("dateTimeFilter", filter);
                 request.getRequestDispatcher("/meals.jsp").forward(request, response);
                 break;
         }

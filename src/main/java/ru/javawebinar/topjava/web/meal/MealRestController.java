@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import ru.javawebinar.topjava.AuthorizedUser;
+import ru.javawebinar.topjava.DateTimeFilter;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.service.MealService;
 import ru.javawebinar.topjava.to.MealWithExceed;
@@ -33,14 +34,11 @@ public class MealRestController {
     }
 
     public void save(Meal meal) {
-        if (meal.getId()!=null)
-            update(meal);
-        else
-            create(meal);
+        Meal meal1 = meal.isNew() ? service.create(meal, AuthorizedUser.getId()) : service.save(meal, AuthorizedUser.getId());
     }
 
-    public List<MealWithExceed> getAll() {
-        return service.getAll(AuthorizedUser.getId(), AuthorizedUser.getDateTimeFilter(), AuthorizedUser.getCaloriesPerDay());
+    public List<MealWithExceed> getAll(DateTimeFilter filter) {
+        return service.getAll(AuthorizedUser.getId(), filter, AuthorizedUser.getCaloriesPerDay());
     }
 
     public List<MealWithExceed> getAllWithoutFilter() {

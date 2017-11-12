@@ -7,7 +7,7 @@ import static ru.javawebinar.topjava.util.MealsUtil.DEFAULT_CALORIES_PER_DAY;
 @Slf4j
 public class AuthorizedUser {
     private static int id = 1;
-    private static final DateTimeFilter dateTimeFilter = new DateTimeFilter();
+//    private static final DateTimeFilter dateTimeFilter = new DateTimeFilter();
 
 //    public static int id() {
 //        return id;
@@ -23,8 +23,8 @@ public class AuthorizedUser {
         return DEFAULT_CALORIES_PER_DAY;
     }
 
-    public static DateTimeFilter getDateTimeFilter() {
-        log.debug("getDateTimeFilter");
-        return dateTimeFilter;
-    }
+//    public static DateTimeFilter getDateTimeFilter() {
+//        log.debug("getDateTimeFilter");
+//        return dateTimeFilter;
+//    }
 }

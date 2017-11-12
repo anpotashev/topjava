@@ -3,7 +3,7 @@
 <jsp:useBean id="dateTimeFilter" class="ru.javawebinar.topjava.DateTimeFilter" scope="request"/>
 <table>
     <tbody>
-    <form action="/meals" method="post">
+    <form action="meals" method="get">
         <input type="hidden" name="action" value="filter"/>
         <tr>
             <th>Start Date</th>

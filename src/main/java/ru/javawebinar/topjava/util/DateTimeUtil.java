@@ -15,9 +15,8 @@ public class DateTimeUtil {
     }
 
     public static boolean isBetween(LocalDate ld, LocalDate startDate, LocalDate endDate) {
-        boolean result = startDate == null || ld.compareTo(startDate) >= 0;
-        result &= endDate == null || endDate.compareTo(ld) >= 0;
-        return result;
+        return (startDate == null || ld.compareTo(startDate) >= 0) &&
+                (endDate == null || endDate.compareTo(ld) >= 0);
     }
 
     public static String toString(LocalDateTime ldt) {

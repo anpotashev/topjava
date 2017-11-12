@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import ru.javawebinar.topjava.model.User;
-import ru.javawebinar.topjava.web.meal.MealRestController;
 
 import java.util.Arrays;
 
@@ -27,8 +26,8 @@ public class SpringMain {
 //            printUser(u);
 //            System.out.println("-----------");
             /* admin's meals */
-            MealRestController restController = appCtx.getBean(MealRestController.class);
-            restController.getAll().forEach(System.out::println);
+//            MealRestController restController = appCtx.getBean(MealRestController.class);
+//            restController.getAll().forEach(System.out::println);
         }
 
     }

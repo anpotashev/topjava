@@ -21,7 +21,7 @@
     <h3><a href="index.html">Home</a></h3>
     <h2>Meals</h2>
     <hr/>
-    <jsp:include page="fiterForm.jspf"/>
+    <jsp:include page="fiterForm.jsp"/>
 
 
     <hr/>

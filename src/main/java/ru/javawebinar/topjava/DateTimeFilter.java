@@ -58,18 +58,18 @@ public class DateTimeFilter {
 
 
     public void setStartDate(String line) {
-        setStartDate(line.length()>0 ? LocalDate.parse(line, DateTimeUtil.DATE_FORMATTER) : null);
+        setStartDate(line != null && line.length()>0 ? LocalDate.parse(line, DateTimeUtil.DATE_FORMATTER) : null);
     }
 
     public void setEndDate(String line) {
-        setEndDate(line.length()>0 ? LocalDate.parse(line, DateTimeUtil.DATE_FORMATTER) : null);
+        setEndDate(line != null && line.length()>0 ? LocalDate.parse(line, DateTimeUtil.DATE_FORMATTER) : null);
     }
 
     public void setStartTime(String line) {
-        setStartTime(line.length()>0 ? LocalTime.parse(line, DateTimeUtil.TIME_FORMATTER) : null);
+        setStartTime(line != null && line.length()>0 ? LocalTime.parse(line, DateTimeUtil.TIME_FORMATTER) : null);
     }
 
     public void setEndTime(String line) {
-        setEndTime(line.length()>0 ? LocalTime.parse(line, DateTimeUtil.TIME_FORMATTER) : null);
+        setEndTime(line != null && line.length()>0 ? LocalTime.parse(line, DateTimeUtil.TIME_FORMATTER) : null);
     }
 }
