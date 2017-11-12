@@ -25,7 +25,7 @@
             <td><input type="submit" value="filter"/></td>
     </form>
     <%--TODO некорректное закрытие формы--%>
-    <form action="/meals" method="post">
+    <form action="meals" method="get">
         <td>
             <input type="hidden" name="action" value="filter"/>
             <input type="hidden" name="startTime" value=""/>
