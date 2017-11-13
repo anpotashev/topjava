@@ -1,5 +1,6 @@
 package ru.javawebinar.topjava.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.javawebinar.topjava.DateTimeFilter;
@@ -14,6 +15,7 @@ import java.util.List;
 import static ru.javawebinar.topjava.util.ValidationUtil.checkNotFoundWithIdUserId;
 
 @Service
+@Slf4j
 public class MealServiceImpl implements MealService {
 
     @Autowired
@@ -31,16 +33,21 @@ public class MealServiceImpl implements MealService {
 
     @Override
     public Meal save(Meal meal, int userId) throws NotFoundException {
-        return checkNotFoundWithIdUserId(repository.save(meal, userId), meal.getId(), userId);
+        log.debug("save");
+        return checkNotFoundWithIdUserId(
+                repository.save(meal, userId),
+                meal.getId(),
+                userId);
     }
 
     @Override
     public Meal create(Meal meal, int userId) {
-        return repository.create(meal, userId);
+        log.debug("create");
+        return repository.save(meal, userId);
     }
 
     @Override
-    public List<MealWithExceed> getAll(int userId, DateTimeFilter dateTimeFilter, int caloriesPerDay) {
+    public List<MealWithExceed> getAllFiltered(int userId, DateTimeFilter dateTimeFilter, int caloriesPerDay) {
         return MealsUtil.getFilteredWithExceeded(
                 repository.getAllFiltered(userId, dateTimeFilter)
                 , dateTimeFilter.getStartTime()

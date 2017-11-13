@@ -1,6 +1,5 @@
 package ru.javawebinar.topjava.repository.mock;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import ru.javawebinar.topjava.DateTimeFilter;
 import ru.javawebinar.topjava.model.Meal;
@@ -17,7 +16,6 @@ import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 
 @Repository
-@Slf4j
 public class InMemoryMealRepositoryImpl implements MealRepository {
     private Map<Integer, Map<Integer, Meal>> repository = new ConcurrentHashMap<>();
     private AtomicInteger counter = new AtomicInteger(0);
@@ -27,11 +25,21 @@ public class InMemoryMealRepositoryImpl implements MealRepository {
     }
 
     private Meal create(Map.Entry<Integer, Meal> userAndMeal) {
-        return create(userAndMeal.getValue(), userAndMeal.getKey());
+        return save(userAndMeal.getValue(), userAndMeal.getKey());
     }
 
     @Override
     public Meal save(Meal meal, int userId) {
+        return meal.isNew() ? create(meal, userId) : update(meal, userId);
+    }
+
+    private Meal create(Meal meal, int userId) {
+        meal.setId(counter.incrementAndGet());
+        getUserMealsRepository(userId).put(meal.getId(), meal);
+        return meal;
+    }
+
+    private Meal update(Meal meal, int userId) {
         Map<Integer, Meal> meals = getUserMealsRepository(userId);
         return meals.get(meal.getId()) == null ? null : meals.put(meal.getId(), meal);
     }
@@ -57,12 +65,6 @@ public class InMemoryMealRepositoryImpl implements MealRepository {
     @Override
     public List<Meal> getAll(int userId) {
         return getAllFiltered(userId, new DateTimeFilter());
-    }
-
-    @Override
-    public Meal create(Meal meal, int userId) {
-        meal.setId(counter.incrementAndGet());
-        return getUserMealsRepository(userId).put(meal.getId(), meal);
     }
 
     private Map<Integer, Meal> getUserMealsRepository(int userId) {

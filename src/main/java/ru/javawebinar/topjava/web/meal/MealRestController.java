@@ -18,11 +18,8 @@ public class MealRestController {
     private MealService service;
 
     public Meal create(Meal meal) {
-        return service.save(meal, AuthorizedUser.getId());
-    }
-
-    public void update(Meal meal) {
-        service.save(meal, AuthorizedUser.getId());
+        log.debug("create");
+        return service.create(meal, AuthorizedUser.getId());
     }
 
     public void delete(int id) {
@@ -34,16 +31,17 @@ public class MealRestController {
     }
 
     public void save(Meal meal) {
-        Meal meal1 = meal.isNew() ? service.create(meal, AuthorizedUser.getId()) : service.save(meal, AuthorizedUser.getId());
+        log.debug("save");
+//        Meal meal1 = meal.isNew() ? service.create(meal, AuthorizedUser.getId()) : service.save(meal, AuthorizedUser.getId());
+        service.save(meal, AuthorizedUser.getId());
     }
 
-    public List<MealWithExceed> getAll(DateTimeFilter filter) {
-        return service.getAll(AuthorizedUser.getId(), filter, AuthorizedUser.getCaloriesPerDay());
+    public List<MealWithExceed> getAllFiltered(DateTimeFilter filter) {
+        return service.getAllFiltered(AuthorizedUser.getId(), filter, AuthorizedUser.getCaloriesPerDay());
     }
 
-    public List<MealWithExceed> getAllWithoutFilter() {
+    public List<MealWithExceed> getAll() {
         return service.getAll(AuthorizedUser.getId(), AuthorizedUser.getCaloriesPerDay());
     }
-
 
 }

@@ -4,9 +4,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.GenericXmlApplicationContext;
+import ru.javawebinar.topjava.AuthorizedUser;
 import ru.javawebinar.topjava.DateTimeFilter;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.web.meal.MealRestController;
+import ru.javawebinar.topjava.web.user.AdminRestController;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -23,12 +25,14 @@ public class MealServlet extends HttpServlet {
 
     private MealRestController mealRestController;
     private ConfigurableApplicationContext ctx;
+    private AdminRestController adminRestController;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
         ctx = new GenericXmlApplicationContext("spring/spring-app.xml");
         mealRestController = ctx.getBean(MealRestController.class);
+        adminRestController = ctx.getBean(AdminRestController.class);
     }
 
     @Override
@@ -49,23 +53,18 @@ public class MealServlet extends HttpServlet {
                     Integer.valueOf(request.getParameter("calories")));
 
             log.info(meal.isNew() ? "Create {}" : "Update {}", meal);
-            mealRestController.save(meal);
+            if (meal.isNew()) mealRestController.create(meal);
+            else mealRestController.save(meal);
         }
-//        if (action.equals("filter")) {
-//            DateTimeFilter filter = new DateTimeFilter();
-//            filter.setStartDate(request.getParameter("startDate"));
-//            filter.setEndDate(request.getParameter("endDate"));
-//            filter.setStartTime(request.getParameter("startTime"));
-//            filter.setEndTime(request.getParameter("endTime"));
-////            request.setAttribute("filter", filter);
-//        }
         response.sendRedirect("meals");
     }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String action = request.getParameter("action");
-
+        if (request.getParameterMap().containsKey("userId")) {
+            AuthorizedUser.setId(Integer.parseInt(request.getParameter("userId")));
+        }
         switch (action == null ? "all" : action) {
             case "delete":
                 int id = getId(request);
@@ -90,8 +89,10 @@ public class MealServlet extends HttpServlet {
                 filter.setStartTime(request.getParameter("startTime"));
                 filter.setEndTime(request.getParameter("endTime"));
 
-                request.setAttribute("meals",mealRestController.getAll(filter));
+                request.setAttribute("meals",mealRestController.getAllFiltered(filter));
                 request.setAttribute("dateTimeFilter", filter);
+                request.setAttribute("users", adminRestController.getAll());
+                request.setAttribute("loggedUserId", AuthorizedUser.getId());
                 request.getRequestDispatcher("/meals.jsp").forward(request, response);
                 break;
         }

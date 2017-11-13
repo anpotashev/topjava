@@ -19,7 +19,7 @@ public interface MealService {
 
     Meal create(Meal meal, int userId);
 
-    List<MealWithExceed> getAll(int userId, DateTimeFilter dateTimeFilter, int caloriesPerDay);
+    List<MealWithExceed> getAllFiltered(int userId, DateTimeFilter dateTimeFilter, int caloriesPerDay);
 
     List<MealWithExceed> getAll(int userId, int caloriesPerDay);
 }

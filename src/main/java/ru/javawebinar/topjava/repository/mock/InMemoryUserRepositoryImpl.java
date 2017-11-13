@@ -2,7 +2,6 @@ package ru.javawebinar.topjava.repository.mock;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
-import ru.javawebinar.topjava.model.AbstractNamedEntity;
 import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.UserRepository;
@@ -23,6 +22,7 @@ public class InMemoryUserRepositoryImpl implements UserRepository {
     private final AtomicInteger idCounter = new AtomicInteger(0);
     private final User DEFAULT_ADMIN = new User(idCounter.incrementAndGet(), "admin", "admin@foo.bar", "admin", Role.ROLE_ADMIN, Role.ROLE_USER);
     private final User DEFAULT_USER = new User(idCounter.incrementAndGet(), "user", "user@foo.bar", "user", Role.ROLE_ADMIN);
+    private final User DEFAULT_USER2 = new User(idCounter.incrementAndGet(), "user2", "user2@foo.bar", "user2", Role.ROLE_ADMIN);
 
     {
         resetToDefault();
@@ -32,6 +32,7 @@ public class InMemoryUserRepositoryImpl implements UserRepository {
         repository.clear();
         save(DEFAULT_ADMIN);
         save(DEFAULT_USER);
+        save(DEFAULT_USER2);
     }
 
     @Override
@@ -60,8 +61,8 @@ public class InMemoryUserRepositoryImpl implements UserRepository {
     public List<User> getAll() {
         log.info("getAll");
         return repository.values().stream()
-                .sorted(Comparator.comparing(AbstractNamedEntity::getName)
-                        .thenComparing(AbstractNamedEntity::getId)
+                .sorted(Comparator.comparing(User::getName)
+                        .thenComparing(User::getId)
                 )
                 .collect(toList());
     }

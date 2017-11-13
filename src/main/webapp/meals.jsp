@@ -20,6 +20,13 @@
 <section>
     <h3><a href="index.html">Home</a></h3>
     <h2>Meals</h2>
+    <form action="meals" method="get">
+        <select name="userId"  onchange="this.form.submit()">
+            <c:forEach var="user" items="${users}">
+                <option value="${user.id}" <c:if test="${loggedUserId==user.id}" >selected</c:if>>${user.name}</option>
+            </c:forEach>
+        </select>
+    </form>
     <hr/>
     <jsp:include page="fiterForm.jsp"/>
 
