@@ -5,8 +5,9 @@ import ru.javawebinar.topjava.DateTimeFilter;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
 import ru.javawebinar.topjava.util.DateTimeUtil;
-import ru.javawebinar.topjava.util.MealsUtil;
 
+import java.time.LocalDateTime;
+import java.time.Month;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -21,12 +22,25 @@ public class InMemoryMealRepositoryImpl implements MealRepository {
     private AtomicInteger counter = new AtomicInteger(0);
 
     {
-        MealsUtil.MEALS.forEach(this::create);
+//        MealsUtil.MEALS.forEach(this::create);
+
+        create(new Meal(LocalDateTime.of(2015, Month.MAY, 30, 10, 0), "Завтрак Админа", 500), 1);
+        create(new Meal(LocalDateTime.of(2015, Month.MAY, 30, 13, 0), "Обед Админа", 1000), 1);
+        create(new Meal(LocalDateTime.of(2015, Month.MAY, 30, 20, 0), "Ужин Админа", 500), 1);
+        create(new Meal(LocalDateTime.of(2015, Month.MAY, 31, 10, 0), "Завтрак Админа", 1000), 1);
+        create(new Meal(LocalDateTime.of(2015, Month.MAY, 31, 13, 0), "Обед Админа", 500), 1);
+        create(new Meal(LocalDateTime.of(2015, Month.MAY, 31, 20, 0), "Ужин Админа", 510), 1);
+        create(new Meal(LocalDateTime.of(2015, Month.MAY, 30, 10, 0), "Завтрак Пользователя", 500), 2);
+        create(new Meal(LocalDateTime.of(2015, Month.MAY, 30, 13, 0), "Обед Пользователя", 1000), 2);
+        create(new Meal(LocalDateTime.of(2015, Month.MAY, 30, 20, 0), "Ужин Пользователя", 500), 2);
+        create(new Meal(LocalDateTime.of(2015, Month.MAY, 31, 10, 0), "Завтрак Пользователя", 1000), 2);
+        create(new Meal(LocalDateTime.of(2015, Month.MAY, 31, 13, 0), "Обед Пользователя", 500), 2);
+        create(new Meal(LocalDateTime.of(2015, Month.MAY, 31, 20, 0), "Ужин Пользователя", 510), 2);
     }
 
-    private Meal create(Map.Entry<Integer, Meal> userAndMeal) {
-        return save(userAndMeal.getValue(), userAndMeal.getKey());
-    }
+//    private Meal create(Map.Entry<Integer, Meal> userAndMeal) {
+//        return save(userAndMeal.getValue(), userAndMeal.getKey());
+//    }
 
     @Override
     public Meal save(Meal meal, int userId) {
