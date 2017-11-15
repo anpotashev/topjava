@@ -11,6 +11,8 @@ import ru.javawebinar.topjava.to.MealWithExceed;
 
 import java.util.List;
 
+import static ru.javawebinar.topjava.util.ValidationUtil.assureIdConsistent;
+
 @Controller
 @Slf4j
 public class MealRestController {
@@ -30,8 +32,9 @@ public class MealRestController {
         return service.get(id, AuthorizedUser.getId());
     }
 
-    public void save(Meal meal) {
+    public void save(Meal meal, int id) {
         log.debug("save");
+        assureIdConsistent(meal, id); //пока не имеет смысла
 //        Meal meal1 = meal.isNew() ? service.create(meal, AuthorizedUser.getId()) : service.save(meal, AuthorizedUser.getId());
         service.save(meal, AuthorizedUser.getId());
     }

@@ -3,7 +3,7 @@ package ru.javawebinar.topjava.web;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.support.GenericXmlApplicationContext;
+import ru.javawebinar.topjava.AppContext;
 import ru.javawebinar.topjava.AuthorizedUser;
 import ru.javawebinar.topjava.DateTimeFilter;
 import ru.javawebinar.topjava.model.Meal;
@@ -30,7 +30,8 @@ public class MealServlet extends HttpServlet {
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
-        ctx = new GenericXmlApplicationContext("spring/spring-app.xml");
+//        ctx = new GenericXmlApplicationContext("spring/spring-app.xml");
+        ctx = AppContext.APP_CONTEXT.getContextInstance();
         mealRestController = ctx.getBean(MealRestController.class);
         adminRestController = ctx.getBean(AdminRestController.class);
     }
@@ -54,7 +55,7 @@ public class MealServlet extends HttpServlet {
 
             log.info(meal.isNew() ? "Create {}" : "Update {}", meal);
             if (meal.isNew()) mealRestController.create(meal);
-            else mealRestController.save(meal);
+            else mealRestController.save(meal, meal.getId());
         }
         response.sendRedirect("meals");
     }
@@ -91,8 +92,9 @@ public class MealServlet extends HttpServlet {
 
                 request.setAttribute("meals",mealRestController.getAllFiltered(filter));
                 request.setAttribute("dateTimeFilter", filter);
-                request.setAttribute("users", adminRestController.getAll());
-                request.setAttribute("loggedUserId", AuthorizedUser.getId());
+                request.setAttribute("loggedUserName", adminRestController.get(AuthorizedUser.getId()).getName());
+//                request.setAttribute("users", adminRestController.getAll());
+//                request.setAttribute("loggedUserId", AuthorizedUser.getId());
                 request.getRequestDispatcher("/meals.jsp").forward(request, response);
                 break;
         }
