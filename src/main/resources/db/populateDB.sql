@@ -9,3 +9,17 @@ INSERT INTO users (name, email, password) VALUES
 INSERT INTO user_roles (role, user_id) VALUES
   ('ROLE_USER', 100000),
   ('ROLE_ADMIN', 100001);
+
+insert into meals (datetime, description, calories, user_id) VALUES ('2017-10-01 10:00', 'Завтрак пользователя', 500, 100000);
+insert into meals (datetime, description, calories, user_id) VALUES ('2017-10-01 15:00', 'Обед пользователя', 700, 100000);
+insert into meals (datetime, description, calories, user_id) VALUES ('2017-10-01 18:00', 'Ужин пользователя', 800, 100000);
+insert into meals (datetime, description, calories, user_id) VALUES ('2017-10-02 10:00', 'Завтрак пользователя', 500, 100000);
+insert into meals (datetime, description, calories, user_id) VALUES ('2017-10-02 15:00', 'Обед пользователя', 700, 100000);
+insert into meals (datetime, description, calories, user_id) VALUES ('2017-10-02 18:00', 'Ужин пользователя', 810, 100000);
+
+insert into meals (datetime, description, calories, user_id) VALUES ('2017-10-01 10:00', 'Завтрак админа', 500, 100001);
+insert into meals (datetime, description, calories, user_id) VALUES ('2017-10-01 15:00', 'Обед админа', 700, 100001);
+insert into meals (datetime, description, calories, user_id) VALUES ('2017-10-01 18:00', 'Ужин админа', 800, 100001);
+insert into meals (datetime, description, calories, user_id) VALUES ('2017-10-02 10:00', 'Завтрак админа', 500, 100001);
+insert into meals (datetime, description, calories, user_id) VALUES ('2017-10-02 15:00', 'Обед админа', 700, 100001);
+insert into meals (datetime, description, calories, user_id) VALUES ('2017-10-02 18:00', 'Ужин админа', 810, 100001);

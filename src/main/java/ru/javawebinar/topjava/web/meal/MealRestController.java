@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import ru.javawebinar.topjava.AuthorizedUser;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.service.MealService;
+import ru.javawebinar.topjava.service.UserService;
 import ru.javawebinar.topjava.to.MealWithExceed;
 import ru.javawebinar.topjava.util.DateTimeUtil;
 import ru.javawebinar.topjava.util.MealsUtil;
@@ -23,10 +24,12 @@ public class MealRestController {
     private static final Logger log = LoggerFactory.getLogger(MealRestController.class);
 
     private final MealService service;
+    private final UserService userService;
 
     @Autowired
-    public MealRestController(MealService service) {
+    public MealRestController(MealService service, UserService userService) {
         this.service = service;
+        this.userService = userService;
     }
 
     public Meal get(int id) {
@@ -44,7 +47,8 @@ public class MealRestController {
     public List<MealWithExceed> getAll() {
         int userId = AuthorizedUser.id();
         log.info("getAll for user {}", userId);
-        return MealsUtil.getWithExceeded(service.getAll(userId), AuthorizedUser.getCaloriesPerDay());
+        return MealsUtil.getWithExceeded(service.getAll(userId),
+                userService.get(AuthorizedUser.id()).getCaloriesPerDay());
     }
 
     public Meal create(Meal meal) {
@@ -78,7 +82,7 @@ public class MealRestController {
         return MealsUtil.getFilteredWithExceeded(mealsDateFiltered,
                 startTime != null ? startTime : LocalTime.MIN,
                 endTime != null ? endTime : LocalTime.MAX,
-                AuthorizedUser.getCaloriesPerDay()
+                userService.get(AuthorizedUser.id()).getCaloriesPerDay()
         );
     }
 }

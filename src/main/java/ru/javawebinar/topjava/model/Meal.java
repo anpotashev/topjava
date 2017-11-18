@@ -1,15 +1,26 @@
 package ru.javawebinar.topjava.model;
 
+
+import lombok.Getter;
+import lombok.Setter;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
+//@Getter //Idea doesn't see getters if annotation in on the class
+@Setter
 public class Meal extends AbstractBaseEntity {
-    private final LocalDateTime dateTime;
 
-    private final String description;
+    @Getter //Idea doesn't see getters if annotation in on the class
+    private LocalDateTime dateTime;
+    @Getter
+    private String description;
+    @Getter
+    private int calories;
 
-    private final int calories;
+    public Meal() {
+    }
 
     public Meal(LocalDateTime dateTime, String description, int calories) {
         this(null, dateTime, description, calories);
@@ -20,18 +31,6 @@ public class Meal extends AbstractBaseEntity {
         this.dateTime = dateTime;
         this.description = description;
         this.calories = calories;
-    }
-
-    public LocalDateTime getDateTime() {
-        return dateTime;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public int getCalories() {
-        return calories;
     }
 
     public LocalDate getDate() {
