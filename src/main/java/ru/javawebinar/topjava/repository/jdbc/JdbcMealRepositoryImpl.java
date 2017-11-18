@@ -98,11 +98,11 @@ public class JdbcMealRepositoryImpl implements MealRepository {
     }
 
     private void appendDateToSQL(LocalDateTime dateTime, boolean isStartDate, StringBuilder builder) {
-        if (dateTime != null) {
+//        if (dateTime != null) {
             builder.append(" and datetime ")
                     .append(isStartDate ? " >= '" : " <= '")
-                    .append(dateTime.toLocalTime().toString())
+                    .append(dateTime.toLocalDate().toString())
                     .append("' ");
-        }
+//        }
     }
 }
