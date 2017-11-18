@@ -19,7 +19,7 @@ import static ru.javawebinar.topjava.UserTestData.USER;
 public class InMemoryUserRepositoryImpl implements UserRepository {
 
     private Map<Integer, User> repository = new ConcurrentHashMap<>();
-    private AtomicInteger counter = new AtomicInteger(100);
+    private AtomicInteger counter = new AtomicInteger(99999);
 
     public void init() {
         repository.clear();

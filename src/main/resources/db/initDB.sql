@@ -36,3 +36,4 @@ CREATE TABLE meals
 );
 
 CREATE UNIQUE INDEX meals_unique_user_id_datetime_idx ON meals(user_id, datetime);
+CREATE INDEX meals_date_idx ON meals ((datetime::DATE));
