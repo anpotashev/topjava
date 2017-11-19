@@ -1,0 +1,38 @@
+package ru.javawebinar.topjava.repository.jdbc.operations.query;
+
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.jdbc.core.SqlInOutParameter;
+import org.springframework.jdbc.object.SqlUpdate;
+import org.springframework.stereotype.Component;
+
+import javax.sql.DataSource;
+import java.sql.Types;
+
+@Component
+public class SaveMealQuery extends SqlUpdate {
+    private static final String SQL = "UPDATE meals SET " +
+            "datetime = :datetime, " +
+            "description = :description, " +
+            "calories = :calories " +
+            "WHERE id = :id AND " +
+            "user_id = :userId";
+
+    public SaveMealQuery(@Qualifier("dataSource") DataSource ds) {
+        super();
+        setDataSource(ds);
+        setSql(sql());
+        declareParameters();
+    }
+
+    protected String sql() {
+        return SQL;
+    }
+
+    protected void declareParameters() {
+        declareParameter(new SqlInOutParameter("id", Types.INTEGER));
+        declareParameter(new SqlInOutParameter("userId", Types.INTEGER));
+        declareParameter(new SqlInOutParameter("description", Types.VARCHAR));
+        declareParameter(new SqlInOutParameter("datetime", Types.TIMESTAMP));
+        declareParameter(new SqlInOutParameter("calories", Types.INTEGER));
+    }
+}

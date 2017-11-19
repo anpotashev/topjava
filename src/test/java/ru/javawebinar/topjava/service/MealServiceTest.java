@@ -42,7 +42,7 @@ public class MealServiceTest {
     @Test
     public void getWithRightUserIdAndMealId() throws Exception {
         Meal meal = mealService.get(START_MEAL_ID, USER_ID);
-        assertMatch(meal, USERS_MEAL.get(0));
+        assertMatch(meal, MEAL_USER_ID_100000_ID_100002);
     }
 
     @Test(expected = NotFoundException.class)
@@ -53,7 +53,7 @@ public class MealServiceTest {
     @Test
     public void deleteWithRightUserIdAndMealId() throws Exception {
         mealService.delete(START_MEAL_ID, USER_ID);
-        assertMatch(mealService.getAll(USER_ID), USERS_MEAL.subList(1,USERS_MEAL.size()));
+        assertMatch(mealService.getAll(USER_ID), MEAL_USER_ID_100000_ID_100003, MEAL_USER_ID_100000_ID_100004, MEAL_USER_ID_100000_ID_100005, MEAL_USER_ID_100000_ID_100006, MEAL_USER_ID_100000_ID_100007);
     }
 
     @Test(expected = NotFoundException.class)
@@ -65,7 +65,7 @@ public class MealServiceTest {
     public void getBetweenDates() throws Exception {
         LocalDate date = LocalDate.of(2015, Month.MAY, 31);
         List<Meal> meals = mealService.getBetweenDates(date, date, USER_ID);
-        assertMatch(meals, USERS_MEAL.subList(0, 3));
+        assertMatch(meals, MEAL_USER_ID_100000_ID_100002, MEAL_USER_ID_100000_ID_100003, MEAL_USER_ID_100000_ID_100004);
     }
 
     @Test
@@ -74,13 +74,13 @@ public class MealServiceTest {
         LocalDateTime startDateTime = LocalDateTime.of(date, LocalTime.MIN);
         LocalDateTime endDateTime = LocalDateTime.of(date, LocalTime.MAX);
         List<Meal> meals = mealService.getBetweenDateTimes(startDateTime, endDateTime, USER_ID);
-        assertMatch(meals, USERS_MEAL.subList(0, 3));
+        assertMatch(meals, MEAL_USER_ID_100000_ID_100002, MEAL_USER_ID_100000_ID_100003, MEAL_USER_ID_100000_ID_100004);
     }
 
     @Test
     public void getAll() throws Exception {
         List<Meal> meals = mealService.getAll(USER_ID);
-        assertMatch(meals, USERS_MEAL);
+        assertMatch(meals, MEAL_USER_ID_100000_ID_100002, MEAL_USER_ID_100000_ID_100003, MEAL_USER_ID_100000_ID_100004, MEAL_USER_ID_100000_ID_100005, MEAL_USER_ID_100000_ID_100006, MEAL_USER_ID_100000_ID_100007);
     }
 
     @Test
@@ -96,7 +96,7 @@ public class MealServiceTest {
         mealService.update(meal, ADMIN_ID);
     }
 
-//    Тест свалится на inMemory-реализации
+    //    Тест свалится на inMemory-реализации
 //    @Ignore
     @Test(expected = DuplicateKeyException.class)
     public void updateWithDuplicateUserIdAndDatetime() {
@@ -113,7 +113,7 @@ public class MealServiceTest {
         assertMatch(mealService.get(100014, USER_ID), meal);
     }
 
-//    Тест свалится на inMemory-реализации
+    //    Тест свалится на inMemory-реализации
 //    @Ignore
     @Test(expected = DuplicateKeyException.class)
     public void createWithDuplicateUserIdAndDatetime() throws Exception {

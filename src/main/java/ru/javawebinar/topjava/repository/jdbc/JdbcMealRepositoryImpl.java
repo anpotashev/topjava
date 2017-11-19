@@ -11,7 +11,6 @@ import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
 
 import javax.sql.DataSource;
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -25,13 +24,6 @@ public class JdbcMealRepositoryImpl implements MealRepository {
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     private final SimpleJdbcInsert insertMeal;
-
-    /* Sorting by desc by date then asc by time: */
-//    private static final String SORT_SQL_STRING = " ORDER BY date_trunc('day', datetime) DESC, datetime";
-
-    /* Sorting by desc by datetime: */
-    private static final String SORT_SQL_STRING = " ORDER BY datetime DESC";
-    private static final String BEGIN_SELECT_STRING = "select id, datetime, description, calories from meals where user_id=? ";
 
     public JdbcMealRepositoryImpl(JdbcTemplate jdbcTemplate, NamedParameterJdbcTemplate namedParameterJdbcTemplate, DataSource dataSource) {
         this.jdbcTemplate = jdbcTemplate;
@@ -56,11 +48,11 @@ public class JdbcMealRepositoryImpl implements MealRepository {
 
     private Meal update(Meal meal, int userId) {
         MapSqlParameterSource map = createParameterMap(meal, userId);
-        return namedParameterJdbcTemplate.update("update meals set " +
+        return namedParameterJdbcTemplate.update("UPDATE meals SET " +
                 "datetime = :datetime, " +
                 "description = :description, " +
                 "calories = :calories " +
-                "where id = :id and " +
+                "WHERE id = :id AND " +
                 "user_id = :userId", map) != 0 ? meal : null;
     }
 
@@ -76,43 +68,24 @@ public class JdbcMealRepositoryImpl implements MealRepository {
 
     @Override
     public boolean delete(int id, int userId) {
-        return jdbcTemplate.update("delete from meals WHERE id=? and user_id=?", id, userId) != 0;
+        return jdbcTemplate.update("DELETE FROM meals WHERE id=? AND user_id=?", id, userId) != 0;
     }
 
     @Override
     public Meal get(int id, int userId) {
-        List<Meal> meals = jdbcTemplate.query(BEGIN_SELECT_STRING+"and id=? ", ROW_MAPPER, userId, id);
+        List<Meal> meals = jdbcTemplate.query("SELECT id, datetime, description, calories FROM meals WHERE user_id=? AND id=? ", ROW_MAPPER, userId, id);
         return DataAccessUtils.singleResult(meals);
     }
 
     @Override
     public List<Meal> getAll(int userId) {
-        return jdbcTemplate.query(BEGIN_SELECT_STRING + SORT_SQL_STRING, ROW_MAPPER, userId);
+        return jdbcTemplate.query("SELECT id, datetime, description, calories FROM meals WHERE user_id=? ORDER BY datetime DESC", ROW_MAPPER, userId);
     }
-
-//    @Override
-//    public List<Meal> getBetween(LocalDateTime startDate, LocalDateTime endDate, int userId) {
-//        StringBuilder sqlBuilder = new StringBuilder(BEGIN_SELECT_STRING);
-//        appendDateToSQL(startDate, true, sqlBuilder);
-//        appendDateToSQL(endDate, false, sqlBuilder);
-//        sqlBuilder.append(SORT_SQL_STRING);
-//        return jdbcTemplate.query(sqlBuilder.toString(), ROW_MAPPER, userId);
-//    }
-//
-//    private void appendDateToSQL(LocalDateTime dateTime, boolean isStartDate, StringBuilder builder) {
-//        builder.append(" and date_trunc('day', datetime) ")
-//                .append(isStartDate ? " >= '" : " <= '")
-//                .append(dateTime.toLocalDate().toString())
-//                .append("' ");
-//    }
 
     @Override
     public List<Meal> getBetween(LocalDateTime startDate, LocalDateTime endDate, int userId) {
-        StringBuilder sqlBuilder = new StringBuilder(BEGIN_SELECT_STRING)
-                .append("and datetime between ? and ? ")
-                .append(SORT_SQL_STRING);
-        return jdbcTemplate.query(sqlBuilder.toString(), ROW_MAPPER, userId, Timestamp.valueOf(startDate), Timestamp.valueOf(endDate));
+        String sql = "SELECT id, datetime, description, calories FROM meals WHERE user_id=? AND datetime BETWEEN ? AND ? ORDER BY datetime DESC";
+        return jdbcTemplate.query(sql, ROW_MAPPER, userId, startDate, endDate);
     }
-
 
 }
