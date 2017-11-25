@@ -1,19 +1,54 @@
 package ru.javawebinar.topjava.model;
 
-import javax.persistence.FetchType;
-import javax.persistence.ManyToOne;
+import lombok.Getter;
+import lombok.Setter;
+
+import javax.persistence.*;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
+@Getter
+@Setter
+@Entity
+@Table(name = "meals", uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "date_time"}, name = "meals_unique_user_datetime_idx")})
+@NamedQueries(
+        {
+                @NamedQuery(name = "MEAL.findByIdAndUserID"
+                        , query = "SELECT m from Meal m WHERE m.id=:id AND m.user.id=:userId")
+                , @NamedQuery(name = "MEAL.findAllUserID"
+                , query = "SELECT m from Meal m WHERE m.user.id=:userId order by m.dateTime desc ")
+                , @NamedQuery(name = "MEAL.findAllBetweenDatesAndUserID"
+                , query = "SELECT m from Meal m WHERE m.user.id=:userId AND m.dateTime BETWEEN :startDate AND :endDate order by m.dateTime desc ")
+                , @NamedQuery(name = "MEAL.update"
+                , query = "UPDATE Meal m SET m.dateTime=:dateTime, m.description=:description, m.calories=:calories WHERE m.id=:id AND m.user.id=:userId")
+                , @NamedQuery(name = "MEAL.delete"
+                , query = "DELETE from Meal m WHERE m.id=:id AND m.user.id=:userId")
+
+        }
+
+)
 public class Meal extends AbstractBaseEntity {
+
+    @Column(name = "date_time", nullable = false)
+    @NotNull(message = "date_time must not be empty")
     private LocalDateTime dateTime;
 
+    @Column(name = "description", nullable = false)
+    @NotNull
+    @NotEmpty(message = "description must not be empty")
     private String description;
 
+    @Column(name = "calories", nullable = false)
+    @NotNull(message = "calories must not be empty")
+    @Min(value = 1, message = "calories must be positive")
     private int calories;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @JoinColumn(name = "user_id")
     private User user;
 
     public Meal() {
@@ -30,44 +65,12 @@ public class Meal extends AbstractBaseEntity {
         this.calories = calories;
     }
 
-    public LocalDateTime getDateTime() {
-        return dateTime;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public int getCalories() {
-        return calories;
-    }
-
     public LocalDate getDate() {
         return dateTime.toLocalDate();
     }
 
     public LocalTime getTime() {
         return dateTime.toLocalTime();
-    }
-
-    public void setDateTime(LocalDateTime dateTime) {
-        this.dateTime = dateTime;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public void setCalories(int calories) {
-        this.calories = calories;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
     }
 
     @Override
