@@ -35,26 +35,26 @@ public class JpaMealRepositoryImpl implements MealRepository {
 
     private Meal update(Meal meal, int userId) {
         /* One query to db */
-        return entityManager.createNamedQuery("MEAL.update")
-                .setParameter("dateTime", meal.getDateTime())
-                .setParameter("description", meal.getDescription())
-                .setParameter("calories", meal.getCalories())
-                .setParameter("id", meal.getId())
-                .setParameter("userId", userId)
-                .executeUpdate() > 0 ? meal : null;
+//        return entityManager.createNamedQuery(Meal.UPDATE)
+//                .setParameter("dateTime", meal.getDateTime())
+//                .setParameter("description", meal.getDescription())
+//                .setParameter("calories", meal.getCalories())
+//                .setParameter("id", meal.getId())
+//                .setParameter("userId", userId)
+//                .executeUpdate() > 0 ? meal : null;
 
         /* Two queries to db */
-//        if (get(meal.getId(), userId) == null)
-//            return null;
-//        meal.setUser(entityManager.getReference(User.class, userId));
-//        return entityManager.merge(meal);
+        if (get(meal.getId(), userId) == null)
+            return null;
+        meal.setUser(entityManager.getReference(User.class, userId));
+        return entityManager.merge(meal);
     }
 
     @Override
     @Transactional
     public boolean delete(int id, int userId) {
         /* One query to db */
-        return entityManager.createNamedQuery("MEAL.delete")
+        return entityManager.createNamedQuery(Meal.DELETE)
                 .setParameter("id", id)
                 .setParameter("userId", userId)
                 .executeUpdate() > 0;
@@ -70,7 +70,7 @@ public class JpaMealRepositoryImpl implements MealRepository {
     @Override
     public Meal get(int id, int userId) {
         return DataAccessUtils.singleResult(
-                entityManager.createNamedQuery("MEAL.findByIdAndUserID", Meal.class)
+                entityManager.createNamedQuery(Meal.FIND_BY_ID_AND_USER_ID, Meal.class)
                         .setParameter("id", id)
                         .setParameter("userId", userId)
                         .getResultList()
@@ -79,7 +79,7 @@ public class JpaMealRepositoryImpl implements MealRepository {
 
     @Override
     public List<Meal> getAll(int userId) {
-        return entityManager.createNamedQuery("MEAL.findAllUserID", Meal.class)
+        return entityManager.createNamedQuery(Meal.FIND_ALL_BY_USER_ID, Meal.class)
                 .setParameter("userId", userId)
                 .getResultList()
                 ;
@@ -87,7 +87,7 @@ public class JpaMealRepositoryImpl implements MealRepository {
 
     @Override
     public List<Meal> getBetween(LocalDateTime startDate, LocalDateTime endDate, int userId) {
-        return entityManager.createNamedQuery("MEAL.findAllBetweenDatesAndUserID", Meal.class)
+        return entityManager.createNamedQuery(Meal.FIND_ALL_BY_USER_ID_BETWEEN_DATES, Meal.class)
                 .setParameter("userId", userId)
                 .setParameter("startDate", startDate)
                 .setParameter("endDate", endDate)

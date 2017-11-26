@@ -6,6 +6,7 @@ import ru.javawebinar.topjava.model.User;
 import java.util.Arrays;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hibernate.bytecode.enhance.spi.EnhancerConstants.*;
 import static ru.javawebinar.topjava.model.AbstractBaseEntity.START_SEQ;
 
 public class UserTestData {
@@ -16,7 +17,14 @@ public class UserTestData {
     public static final User ADMIN = new User(ADMIN_ID, "Admin", "admin@gmail.com", "admin", Role.ROLE_ADMIN);
 
     public static void assertMatch(User actual, User expected) {
-        assertThat(actual).isEqualToIgnoringGivenFields(expected, "registered", "roles");
+        assertThat(actual).isEqualToIgnoringGivenFields(expected, "registered", "roles"
+                , ENTITY_ENTRY_FIELD_NAME
+                , NEXT_FIELD_NAME
+                , INTERCEPTOR_FIELD_NAME
+//                , "$$_hibernate_entityEntryHolder"
+//                , "$$_hibernate_nextManagedEntity"
+//                , "$$_hibernate_attributeInterceptor"
+        );
     }
 
     public static void assertMatch(Iterable<User> actual, User... expected) {
@@ -24,6 +32,13 @@ public class UserTestData {
     }
 
     public static void assertMatch(Iterable<User> actual, Iterable<User> expected) {
-        assertThat(actual).usingElementComparatorIgnoringFields("registered", "roles").isEqualTo(expected);
+        assertThat(actual).usingElementComparatorIgnoringFields("registered", "roles"
+                , ENTITY_ENTRY_FIELD_NAME
+                , NEXT_FIELD_NAME
+                , INTERCEPTOR_FIELD_NAME
+//                , "$$_hibernate_entityEntryHolder"
+//                , "$$_hibernate_nextManagedEntity"
+//                , "$$_hibernate_attributeInterceptor"
+        ).isEqualTo(expected);
     }
 }

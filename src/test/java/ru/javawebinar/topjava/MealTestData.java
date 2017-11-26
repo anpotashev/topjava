@@ -8,6 +8,7 @@ import java.util.List;
 
 import static java.time.LocalDateTime.of;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hibernate.bytecode.enhance.spi.EnhancerConstants.*;
 import static ru.javawebinar.topjava.model.AbstractBaseEntity.START_SEQ;
 
 public class MealTestData {
@@ -39,8 +40,16 @@ public class MealTestData {
     }
 
     public static void assertMatch(Meal actual, Meal expected) {
-        assertThat(actual)
-                .isEqualToComparingFieldByField(expected);
+//        assertThat(actual)
+//                .isEqualToComparingFieldByField(expected);
+        assertThat(actual).isEqualToIgnoringGivenFields(expected
+                , ENTITY_ENTRY_FIELD_NAME
+                , NEXT_FIELD_NAME
+                , INTERCEPTOR_FIELD_NAME
+//                "$$_hibernate_entityEntryHolder"
+//                , "$$_hibernate_nextManagedEntity"
+//                , "$$_hibernate_attributeInterceptor"
+        );
     }
 
     public static void assertMatch(Iterable<Meal> actual, Meal... expected) {
@@ -48,6 +57,16 @@ public class MealTestData {
     }
 
     public static void assertMatch(Iterable<Meal> actual, Iterable<Meal> expected) {
-        assertThat(actual).usingFieldByFieldElementComparator().isEqualTo(expected);
+//        assertThat(actual).usingFieldByFieldElementComparator().isEqualTo(expected);
+        assertThat(actual).usingElementComparatorIgnoringFields(
+                ENTITY_ENTRY_FIELD_NAME
+                , PREVIOUS_FIELD_NAME
+                , NEXT_FIELD_NAME
+                , INTERCEPTOR_FIELD_NAME
+//                "$$_hibernate_entityEntryHolder"
+//                , "$$_hibernate_previousManagedEntity"
+//                . "$$_hibernate_nextManagedEntity"
+//                , "$$_hibernate_attributeInterceptor"
+        ).isEqualTo(expected);
     }
 }

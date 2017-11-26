@@ -1,45 +1,69 @@
 package ru.javawebinar.topjava;
 
 import lombok.extern.slf4j.Slf4j;
-import org.junit.rules.TestWatcher;
+import org.junit.AssumptionViolatedException;
+import org.junit.rules.Stopwatch;
 import org.junit.runner.Description;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
-public class TimeTestRule extends TestWatcher {
-    private static Map<String, Long> durationMap = new HashMap<>();
-    private long startTime;
+public class TimeTestRule extends Stopwatch {
+    private static MultiValueMap<String, Object> multiValueMap = new LinkedMultiValueMap<>();
 
-    @Override
-    protected void starting(Description description) {
-        startTime = System.currentTimeMillis();
+    private static void logResult(Description description, String status, long nanos) {
+        String testName = description.getMethodName();
+        addValues(testName, status, nanos);
+        log.info("Test result:");
+        printCaption();
+        logValues(testName, status, nanos);
+    }
+
+    private static void addValues(String testName, String status, long nanos) {
+        multiValueMap.add(testName, status);
+        multiValueMap.add(testName, nanos);
+    }
+    private static void printCaption() {
+        String result = String.format("%-20s %-20s %12s", "method name", "result", "duration (ms)");
+        log.info(result);
+    }
+
+    private static void logValues(String testName, String result, long nanos) {
+        String line = String.format("   %-20s %-20s %d", testName, result, TimeUnit.NANOSECONDS.toMicros(nanos));
+        log.info(line);
     }
 
     @Override
-    protected void finished(Description description) {
-        long duration = System.currentTimeMillis() - startTime;
-        durationMap.put(description.getMethodName(), duration);
-        StringBuilder builder = new StringBuilder("Time result of test:")
-                .append(String.format("\n%-20s %12s", "method name", "duration (ms)"))
-                .append(String.format("\n%-20s %06d", description.getMethodName(), duration));
-        log.info(builder.toString());
+    protected void succeeded(long nanos, Description description) {
+        logResult(description, "succeeded", nanos);
     }
+
+    @Override
+    protected void failed(long nanos, Throwable e, Description description) {
+        logResult(description, "failed", nanos);
+    }
+
+    @Override
+    protected void skipped(long nanos, AssumptionViolatedException e, Description description) {
+        logResult(description, "skipped", nanos);
+    }
+
+//    @Override
+//    protected void finished(long nanos, Description description) {
+////        logResult(description, "finished", nanos);
+//    }
 
     public static void testsResults() {
-        StringBuilder builder = new StringBuilder("Time results of tests:")
-                .append(String.format("\n%-20s %12s", "method name", "duration (ms)"));
-        durationMap.forEach((methodName, duration) -> builder.append(String.format("\n%-20s %06d", methodName, duration)));
-        log.info(builder.toString());
+        log.info("");
+        log.info("Tests results:");
+        printCaption();
+        multiValueMap.forEach((s, objects) -> logValues(s, (String) (multiValueMap.getFirst(s)), (Long) (multiValueMap.get(s).get(1))));
 
-    }
-
-    public static Map<String, Long> getDurationMap() {
-        return durationMap;
     }
 
     public static void clearMap() {
-        durationMap.clear();
+        multiValueMap.clear();
     }
 }

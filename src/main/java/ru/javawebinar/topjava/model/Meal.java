@@ -19,9 +19,9 @@ import java.time.LocalTime;
         {
                 @NamedQuery(name = "MEAL.findByIdAndUserID"
                         , query = "SELECT m from Meal m WHERE m.id=:id AND m.user.id=:userId")
-                , @NamedQuery(name = "MEAL.findAllUserID"
+                , @NamedQuery(name = "MEAL.findAllByUserID"
                 , query = "SELECT m from Meal m WHERE m.user.id=:userId order by m.dateTime desc ")
-                , @NamedQuery(name = "MEAL.findAllBetweenDatesAndUserID"
+                , @NamedQuery(name = "MEAL.findAllByUserIdBetweenDates"
                 , query = "SELECT m from Meal m WHERE m.user.id=:userId AND m.dateTime BETWEEN :startDate AND :endDate order by m.dateTime desc ")
                 , @NamedQuery(name = "MEAL.update"
                 , query = "UPDATE Meal m SET m.dateTime=:dateTime, m.description=:description, m.calories=:calories WHERE m.id=:id AND m.user.id=:userId")
@@ -32,6 +32,12 @@ import java.time.LocalTime;
 
 )
 public class Meal extends AbstractBaseEntity {
+
+    public static final String FIND_BY_ID_AND_USER_ID = "MEAL.findByIdAndUserID";
+    public static final String FIND_ALL_BY_USER_ID = "MEAL.findAllByUserID";
+    public static final String FIND_ALL_BY_USER_ID_BETWEEN_DATES = "MEAL.findAllByUserIdBetweenDates";
+    public static final String UPDATE = "MEAL.update";
+    public static final String DELETE = "MEAL.delete";
 
     @Column(name = "date_time", nullable = false)
     @NotNull(message = "date_time must not be empty")
