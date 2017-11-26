@@ -24,8 +24,8 @@ public class MealTestData {
     public static final Meal ADMIN_MEAL2 = new Meal(ADMIN_MEAL_ID + 1, of(2015, Month.JUNE, 1, 21, 0), "Админ ужин", 1500);
 
     static {
-        Arrays.asList(MEAL1, MEAL2, MEAL3, MEAL4, MEAL5, MEAL6).forEach(s-> s.setUser(UserTestData.USER));
-        Arrays.asList(ADMIN_MEAL1, ADMIN_MEAL2).forEach(s-> s.setUser(UserTestData.ADMIN));
+        Arrays.asList(MEAL1, MEAL2, MEAL3, MEAL4, MEAL5, MEAL6).forEach(s -> s.setUser(UserTestData.USER));
+        Arrays.asList(ADMIN_MEAL1, ADMIN_MEAL2).forEach(s -> s.setUser(UserTestData.ADMIN));
     }
 
     public static final List<Meal> MEALS = Arrays.asList(MEAL6, MEAL5, MEAL4, MEAL3, MEAL2, MEAL1);
@@ -40,7 +40,7 @@ public class MealTestData {
 
     public static void assertMatch(Meal actual, Meal expected) {
         assertThat(actual)
-                .isEqualToComparingFieldByField(expected);
+                .isEqualToIgnoringGivenFields(expected, "user");
     }
 
     public static void assertMatch(Iterable<Meal> actual, Meal... expected) {
@@ -48,6 +48,6 @@ public class MealTestData {
     }
 
     public static void assertMatch(Iterable<Meal> actual, Iterable<Meal> expected) {
-        assertThat(actual).usingFieldByFieldElementComparator().isEqualTo(expected);
+        assertThat(actual).usingElementComparatorIgnoringFields("user").isEqualTo(expected);
     }
 }

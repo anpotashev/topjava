@@ -25,6 +25,7 @@ public class TimeTestRule extends Stopwatch {
         multiValueMap.add(testName, status);
         multiValueMap.add(testName, nanos);
     }
+
     private static void printCaption() {
         String result = String.format("%-20s %-20s %12s", "method name", "result", "duration (ms)");
         log.info(result);
