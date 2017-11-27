@@ -38,7 +38,7 @@ public class MealServiceTest {
     @AfterClass
     public static void afterClass() {
         TimeTestRule.testsResults();
-        TimeTestRule.clearMap();
+        TimeTestRule.clearResults();
     }
 
     @Rule
