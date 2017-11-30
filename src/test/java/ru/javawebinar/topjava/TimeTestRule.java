@@ -11,7 +11,6 @@ import java.util.concurrent.TimeUnit;
 
 @Slf4j
 public class TimeTestRule extends Stopwatch {
-//    private static MultiValueMap<String, Object> multiValueMap = new LinkedMultiValueMap<>();
     private static List<String> results = new LinkedList<>();
 
     private static void logResult(Description description, String status, long nanos) {
@@ -46,11 +45,6 @@ public class TimeTestRule extends Stopwatch {
     protected void skipped(long nanos, AssumptionViolatedException e, Description description) {
         logResult(description, "skipped", nanos);
     }
-
-//    @Override
-//    protected void finished(long nanos, Description description) {
-////        logResult(description, "finished", nanos);
-//    }
 
     public static void testsResults() {
         log.info("");
