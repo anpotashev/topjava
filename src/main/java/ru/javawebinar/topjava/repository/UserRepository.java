@@ -13,6 +13,10 @@ public interface UserRepository {
     // null if not found
     User get(int id);
 
+    default User getWithMeals(int id) {
+        throw new UnsupportedOperationException("not implemented yet");
+    }
+
     // null if not found
     User getByEmail(String email);
 
