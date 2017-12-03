@@ -11,31 +11,42 @@ import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
 
+import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 import java.time.LocalDateTime;
 import java.util.List;
 
 
-public abstract class AbstractJdbcMealRepositoryImpl implements MealRepository {
+public abstract class AbstractJdbcMealRepositoryImpl<T> implements MealRepository {
 
     private static final RowMapper<Meal> ROW_MAPPER = BeanPropertyRowMapper.newInstance(Meal.class);
 
-    private final JdbcTemplate jdbcTemplate;
-
-    private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
-    private final SimpleJdbcInsert insertMeal;
-
-    public abstract Object convertLocalDateTime(LocalDateTime localDateTime);
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
     @Autowired
-    public AbstractJdbcMealRepositoryImpl(DataSource dataSource, JdbcTemplate jdbcTemplate, NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
+    private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+
+    @Autowired
+    private DataSource dataSource;
+
+    private SimpleJdbcInsert insertMeal;
+
+    public abstract T convertLocalDateTime(LocalDateTime localDateTime);
+
+//    @Autowired
+//    public AbstractJdbcMealRepositoryImpl() {
+//
+//
+////        this.jdbcTemplate = jdbcTemplate;
+////        this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
+//    }
+
+    @PostConstruct
+    public void init() {
         this.insertMeal = new SimpleJdbcInsert(dataSource)
                 .withTableName("meals")
                 .usingGeneratedKeyColumns("id");
-
-        this.jdbcTemplate = jdbcTemplate;
-        this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
     }
 
     @Override
