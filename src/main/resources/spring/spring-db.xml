@@ -49,16 +49,17 @@
             <constructor-arg ref="dataSource"/>
         </bean>
     </beans>
+    <beans profile="jpa,datajpa">
+        <import resource="spring-jpa.xml"/>
+    </beans>
 
     <beans profile="jpa">
         <context:component-scan base-package="ru.javawebinar.**.repository.jpa"/>
-        <import resource="spring-jpa.xml"/>
     </beans>
 
     <beans profile="datajpa">
         <context:component-scan base-package="ru.javawebinar.**.repository.datajpa"/>
         <jpa:repositories base-package="ru.javawebinar.**.repository.datajpa"/>
-        <import resource="spring-jpa.xml"/>
     </beans>
 
 </beans>

@@ -24,6 +24,6 @@ public interface CrudMealRepository extends JpaRepository<Meal, Integer> {
 
     List<Meal> findAllByUserIdAndDateTimeBetweenOrderByDateTimeDesc(int userId, LocalDateTime startDate, LocalDateTime endDate);
 
-    @Transactional
+//    @Transactional
     Meal save(Meal meal);
 }
