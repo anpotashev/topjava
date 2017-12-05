@@ -23,11 +23,17 @@ import static ru.javawebinar.topjava.util.MealsUtil.DEFAULT_CALORIES_PER_DAY;
 })
 @Entity
 @Table(name = "users", uniqueConstraints = {@UniqueConstraint(columnNames = "email", name = "users_unique_email_idx")})
+@NamedEntityGraphs({
+        @NamedEntityGraph(name = User.GRAPH_FIND_WITH_MEALS, attributeNodes = {
+                @NamedAttributeNode("meals")
+        })
+})
 public class User extends AbstractNamedEntity {
 
     public static final String DELETE = "User.delete";
     public static final String BY_EMAIL = "User.getByEmail";
     public static final String ALL_SORTED = "User.getAllSorted";
+    public static final String GRAPH_FIND_WITH_MEALS = "User.graphFindWithMeals";
 
     @Column(name = "email", nullable = false, unique = true)
     @Email
