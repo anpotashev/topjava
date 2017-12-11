@@ -10,35 +10,37 @@
 <body>
 <jsp:include page="fragments/bodyHeader.jsp"/>
 <section>
-    <h3>Meals</h3>
-    <form method="post" action="meals?action=filter">
+    <h3><spring:message code="meals"/></h3>
+    <form method="post" action="<c:url value="/meals/filter"/>">
         <dl>
-            <dt>From Date:</dt>
+            <dt><spring:message code="filter.from_date"/>:</dt>
             <dd><input type="date" name="startDate" value="${param.startDate}"></dd>
         </dl>
         <dl>
-            <dt>To Date:</dt>
+            <dt><spring:message code="filter.to_date"/>:</dt>
             <dd><input type="date" name="endDate" value="${param.endDate}"></dd>
         </dl>
         <dl>
-            <dt>From Time:</dt>
-            <dd><input type="time" name="startTime" value="${param.startTime}"></dd>
+            <dt><spring:message code="filter.from_time"/>:</dt>
+            <dd><input type="text" name="startTime" value="${param.startTime}" pattern="([01][0-9]|2[0-3]):[0-5][0-9]" placeholder="HH:MM"></dd>
+            <%--<dd><input type="time" name="startTime" value="${param.startTime}"></dd>--%>
         </dl>
         <dl>
-            <dt>To Time:</dt>
-            <dd><input type="time" name="endTime" value="${param.endTime}"></dd>
+            <dt><spring:message code="filter.to_time"/>:</dt>
+            <dd><input type="text" name="endTime" value="${param.endTime}" pattern="([01][0-9]|2[0-3]):[0-5][0-9]" placeholder="HH:MM"></dd>
+            <%--<dd><input type="time" name="endTime" value="${param.endTime}"></dd>--%>
         </dl>
-        <button type="submit">Filter</button>
+        <button type="submit"><spring:message code="filter"/></button>
     </form>
     <hr/>
-    <a href="meals/add">Add Meal</a>
+    <a href="<c:url value="/meals/add"/>"><spring:message code="meal.add"/></a>
     <hr/>
     <table border="1" cellpadding="8" cellspacing="0">
         <thead>
         <tr>
-            <th>Date</th>
-            <th>Description</th>
-            <th>Calories</th>
+            <th><spring:message code="meal.date"/></th>
+            <th><spring:message code="meal.description"/></th>
+            <th><spring:message code="meal.calories"/></th>
             <th></th>
             <th></th>
         </tr>
@@ -54,10 +56,8 @@
                 </td>
                 <td>${meal.description}</td>
                 <td>${meal.calories}</td>
-                <td><a href="meals/add/${meal.id}">Update</a></td>
-                <%--<td><form action="meals" method="post" ><input type="hidden" value="${meal.id}" name="id"><button>edit</button></form></td>--%>
-                <%--<td><form action="meals" method="delete" ><input type="hidden" value="${meal.id}" name="id"><button>delete</button></form></td>--%>
-                <td><a href="meals/delete/${meal.id}">Delete</a></td>
+                <td><a href="<c:url value="/meals/edit/${meal.id}"/>"><spring:message code="update"/></a></td>
+                <td><a href="<c:url value="/meals/delete/${meal.id}"/>"><spring:message code="delete"/></a></td>
             </tr>
         </c:forEach>
     </table>

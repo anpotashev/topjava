@@ -1,71 +1,80 @@
 package ru.javawebinar.topjava.web;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.to.MealWithExceed;
 import ru.javawebinar.topjava.web.meal.MealRestController;
 
+import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Controller
-//@RequestMapping("/meals")
+@RequestMapping("/meals")
 public class MealController {
 
     @Autowired
     private MealRestController mealController;
 
-    @GetMapping("/meals")
+    @GetMapping
     public String getMeals(Model model) {
         List<MealWithExceed> meals = mealController.getAll();
         model.addAttribute("meals", meals);
         return "meals";
     }
 
+    @PostMapping("/filter")
+    public String filter(Model model
+                         , HttpServletRequest request
+            , @RequestParam(name = "startDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate
+            , @RequestParam(name = "endDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate
+            , @RequestParam(name = "startTime", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime startTime
+            , @RequestParam(name = "endTime", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime endTime
+    ) {
+        model.addAttribute("meals", mealController.getBetween(startDate, startTime, endDate, endTime));
+        return "meals";
+    }
+
     @GetMapping("/add")
-    public String addMeal(Model model) {
+    public String add(Model model) {
         Meal meal = new Meal(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES), "", 1000);
         model.addAttribute("meal", meal);
         return "mealForm";
     }
 
-//    @GetMapping("/add/{id}")
-    @GetMapping("/edit/")
-    public String editMeal(Model model, @PathVariable int id) {
+    @GetMapping("/edit/{id}")
+    public String editMeal(Model model, @PathVariable(name = "id") int id) {
         Meal meal = mealController.get(id);
         model.addAttribute("meal", meal);
-        return "redirect:/meals";
-//        return "mealForm";
+        return "mealForm";
     }
 
-//    @GetMapping("/delete/{id}")
-    @RequestMapping(value = "meals/delete/{id}", method = RequestMethod.POST)
-    public String delMeal(@PathVariable int id ) {
+    @GetMapping("/delete/{id}")
+    public String delMeal(@PathVariable(name = "id") Integer id) {
         mealController.delete(id);
         return "redirect:/meals";
     }
 
-//    @RequestMapping(value = "/save", method = RequestMethod.POST)
-//    public String save(
-//            @RequestParam(name = "id", required = false) Integer id
-//                       , @RequestParam(name = "dateTime", required = true) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime dateTime
-//                       , @RequestParam(name = "description", required = true) String description
-//                       , @RequestParam(name = "calories", required = true) int calories
-//                       ) {
-//        System.out.println(dateTime);
-//        Meal meal = new Meal(dateTime, description, calories);
-//        if (id != null) {
-//            mealController.update(meal, id);
-//        } else{
-//            mealController.create(meal);
-//        }
-//        return "redirect:/meals";
-//    }
+    @PostMapping("/save")
+    public String save(
+            @RequestParam(name = "id", required = false) Integer id
+            , @RequestParam(name = "dateTime", required = true) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime dateTime
+            , @RequestParam(name = "description", required = true) String description
+            , @RequestParam(name = "calories", required = true) int calories
+    ) {
+        Meal meal = new Meal(dateTime, description, calories);
+        if (id != null) {
+            mealController.update(meal, id);
+        } else {
+            mealController.create(meal);
+        }
+        return "redirect:/meals";
+    }
 }
