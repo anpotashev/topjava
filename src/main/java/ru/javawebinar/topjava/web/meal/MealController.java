@@ -1,44 +1,34 @@
-package ru.javawebinar.topjava.web;
+package ru.javawebinar.topjava.web.meal;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ru.javawebinar.topjava.model.Meal;
-import ru.javawebinar.topjava.to.MealWithExceed;
-import ru.javawebinar.topjava.web.meal.MealRestController;
 
-import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
-import java.util.List;
 
 @Controller
 @RequestMapping("/meals")
-public class MealController {
-
-    @Autowired
-    private MealRestController mealController;
+public class MealController extends AbstractMealController {
 
     @GetMapping
     public String getMeals(Model model) {
-        List<MealWithExceed> meals = mealController.getAll();
-        model.addAttribute("meals", meals);
+        model.addAttribute("meals", super.getAll());
         return "meals";
     }
 
     @PostMapping("/filter")
     public String filter(Model model
-                         , HttpServletRequest request
             , @RequestParam(name = "startDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate
             , @RequestParam(name = "endDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate
             , @RequestParam(name = "startTime", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime startTime
             , @RequestParam(name = "endTime", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime endTime
     ) {
-        model.addAttribute("meals", mealController.getBetween(startDate, startTime, endDate, endTime));
+        model.addAttribute("meals", super.getBetween(startDate, startTime, endDate, endTime));
         return "meals";
     }
 
@@ -51,14 +41,13 @@ public class MealController {
 
     @GetMapping("/edit/{id}")
     public String editMeal(Model model, @PathVariable(name = "id") int id) {
-        Meal meal = mealController.get(id);
-        model.addAttribute("meal", meal);
+        model.addAttribute("meal", super.get(id));
         return "mealForm";
     }
 
     @GetMapping("/delete/{id}")
     public String delMeal(@PathVariable(name = "id") Integer id) {
-        mealController.delete(id);
+        super.delete(id);
         return "redirect:/meals";
     }
 
@@ -71,9 +60,9 @@ public class MealController {
     ) {
         Meal meal = new Meal(dateTime, description, calories);
         if (id != null) {
-            mealController.update(meal, id);
+            super.update(meal, id);
         } else {
-            mealController.create(meal);
+            super.create(meal);
         }
         return "redirect:/meals";
     }

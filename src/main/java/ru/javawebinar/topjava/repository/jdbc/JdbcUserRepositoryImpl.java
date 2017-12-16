@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 public class JdbcUserRepositoryImpl implements UserRepository {
 
 //    private static final BeanPropertyRowMapper<User> ROW_MAPPER = BeanPropertyRowMapper.newInstance(User.class);
-
+    private static final int[] ROLES_UPDATE_BATCH_TIPES = new int[] {Types.INTEGER, Types.VARCHAR};
     @Autowired
     private UserMapper userMapper;
 
@@ -124,12 +124,15 @@ public class JdbcUserRepositoryImpl implements UserRepository {
 
     private void saveRoles(User user) {
         int c = jdbcTemplate.update("DELETE FROM user_roles WHERE user_id=?", user.getId());
+        jdbcTemplate.batchUpdate("INSERT INTO user_roles (user_id, role) VALUES (?, ?)"
+                , prepareBatchArgumentsList(user)
+                , ROLES_UPDATE_BATCH_TIPES);
+    }
 
-        List<Object[]> batch =  user.getRoles().stream().map(role -> new Object[] {user.getId(), role.toString()})
+    private List<Object[]> prepareBatchArgumentsList(User user) {
+        return user.getRoles().stream()
+                .map(role -> new Object[] {user.getId(), role.toString()})
                 .collect(Collectors.toList());
-        int[] types = new int[] {Types.INTEGER, Types.VARCHAR};
-
-        jdbcTemplate.batchUpdate("INSERT INTO user_roles (user_id, role) VALUES (?, ?)", batch, types);
     }
 
 }

@@ -4,22 +4,15 @@
 <%@ taglib prefix="fn" uri="http://topjava.javawebinar.ru/functions" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
-
+<spring:message code="meal.create" var="labelCreate"/>
+<spring:message code="meal.edit" var="labelEdit"/>
 <html>
 <jsp:include page="fragments/headTag.jsp"/>
 <body>
 <jsp:include page="fragments/bodyHeader.jsp"/>
 <section>
     <%--<h3><a href="index.html"><spring:message code="home"/></a></h3>--%>
-    <h2>
-        <c:choose>
-            <c:when test="${not empty meal.id}">
-                <spring:message code="meal.create"/>
-            </c:when>
-            <c:otherwise>
-                <spring:message code="meal.edit"/>
-            </c:otherwise>
-        </c:choose>
+    <h2><c:out value="${meal.id == null ? labelCreate : labelEdit}"/>
     </h2>
     <hr>
     <jsp:useBean id="meal" type="ru.javawebinar.topjava.model.Meal" scope="request"/>
