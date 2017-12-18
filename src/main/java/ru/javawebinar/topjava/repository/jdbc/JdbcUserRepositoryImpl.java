@@ -46,20 +46,23 @@ public class JdbcUserRepositoryImpl implements UserRepository {
     @Transactional
     public User save(User user) {
         BeanPropertySqlParameterSource parameterSource = new BeanPropertySqlParameterSource(user);
-        System.out.println("before");
-        user.getRoles().forEach(role -> System.out.println(role.toString()));
         if (user.isNew()) {
             Number newKey = insertUser.executeAndReturnKey(parameterSource);
             user.setId(newKey.intValue());
-            System.out.println("after");
-            user.getRoles().forEach(role -> System.out.println(role.toString()));
-        } else if (namedParameterJdbcTemplate.update(
-                "UPDATE users SET name=:name, email=:email, password=:password, " +
-                        "registered=:registered, enabled=:enabled, calories_per_day=:caloriesPerDay WHERE id=:id", parameterSource) == 0) {
-            return null;
+        } else {
+            if (namedParameterJdbcTemplate.update(
+                    "UPDATE users SET name=:name, email=:email, password=:password, " +
+                            "registered=:registered, enabled=:enabled, calories_per_day=:caloriesPerDay WHERE id=:id", parameterSource) == 0) {
+                return null;
+            }
+            deleteRoles(user.getId());
         }
         saveRoles(user);
         return user;
+    }
+
+    private void deleteRoles(Integer id) {
+        jdbcTemplate.update("DELETE FROM user_roles WHERE user_id=?", id);
     }
 
     @Override
@@ -73,17 +76,12 @@ public class JdbcUserRepositoryImpl implements UserRepository {
         List<User> users = jdbcTemplate.query("SELECT * FROM users LEFT JOIN user_roles ON users.id = user_roles.user_id WHERE id=?", userMapper, id);
         users = unionRoles(users);
         User user = DataAccessUtils.singleResult(users);
-//        if (user != null) {
-//            loadRoles(user);
-//        }
         return user;
     }
 
     @Override
     public User getByEmail(String email) {
-//        return jdbcTemplate.queryForObject("SELECT * FROM users WHERE email=?", ROW_MAPPER, email);
         List<User> users = jdbcTemplate.query("SELECT * FROM users LEFT JOIN user_roles ON user_roles.user_id = users.id WHERE email=?", userMapper, email);
-//        users.forEach(user -> loadRoles(user));
         users = unionRoles(users);
         return DataAccessUtils.singleResult(users);
     }
@@ -108,22 +106,7 @@ public class JdbcUserRepositoryImpl implements UserRepository {
         return result;
     }
 
-//    private void loadRoles(List<User> users) {
-//        List<Integer> userIds = users.stream().map(u -> u.getId()).collect(Collectors.toList());
-//        jdbcTemplate.query("select id, role from users where id in ")
-//
-//    }
-
-//    private void loadRoles(User user) {
-//        Set<Role> roles =  jdbcTemplate.queryForList("SELECT role FROM user_roles WHERE user_id=?", String.class, user.getId())
-//                .stream()
-//                .map(s -> Role.valueOf(s))
-//                .collect(Collectors.toSet());
-//        user.setRoles(roles);
-//    }
-
     private void saveRoles(User user) {
-        int c = jdbcTemplate.update("DELETE FROM user_roles WHERE user_id=?", user.getId());
         jdbcTemplate.batchUpdate("INSERT INTO user_roles (user_id, role) VALUES (?, ?)"
                 , prepareBatchArgumentsList(user)
                 , ROLES_UPDATE_BATCH_TIPES);
