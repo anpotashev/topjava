@@ -18,12 +18,6 @@ import java.util.List;
 public class MealRestController extends AbstractMealController {
     static final String REST_URL = "/rest/meals";
 
-    @LocalDateOrLocalTime
-    private static final LocalDate START_DATE = LocalDate.of(2015, 05, 30);
-
-//    @Autowired()
-//    private DateTimeFormatterFactory timeFormatter;
-
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Meal get(@PathVariable("id") int id) {
         return super.get(id);

@@ -9,7 +9,6 @@ import ru.javawebinar.topjava.MealTestData;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.web.AbstractControllerTest;
 import ru.javawebinar.topjava.web.formatter.LocalDateFormatter;
-import ru.javawebinar.topjava.web.formatter.LocalDateOrLocalTime;
 import ru.javawebinar.topjava.web.formatter.LocalTimeFormatter;
 import ru.javawebinar.topjava.web.json.JsonUtil;
 
@@ -28,13 +27,13 @@ public class MealRestControllerTest extends AbstractControllerTest {
 
     private static final String URL = MealRestController.REST_URL + "/";
 
-    @LocalDateOrLocalTime
+//    @LocalDateOrLocalTime
     private final LocalDate START_DATE = LocalDate.of(2015, 05, 30);
-    @LocalDateOrLocalTime(type = LocalDateOrLocalTime.Type.TIME)
+//    @LocalDateOrLocalTime(type = LocalDateOrLocalTime.Type.TIME)
     private final LocalTime START_TIME = LocalTime.of(9, 0);
-    @LocalDateOrLocalTime
+//    @LocalDateOrLocalTime
     private final LocalDate END_DATE = LocalDate.of(2015, 05, 30);
-    @LocalDateOrLocalTime(type = LocalDateOrLocalTime.Type.TIME)
+//    @LocalDateOrLocalTime(type = LocalDateOrLocalTime.Type.TIME)
     private final LocalTime END_TIME = LocalTime.of(11, 0);
 
     @Autowired
