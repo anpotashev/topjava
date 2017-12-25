@@ -2,12 +2,15 @@ package ru.javawebinar.topjava.web.meal;
 
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.to.MealWithExceed;
 import ru.javawebinar.topjava.util.DateTimeUtil;
 import ru.javawebinar.topjava.web.formatter.LocalDateOrLocalTime;
 
+import java.net.URI;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -34,8 +37,13 @@ public class MealRestController extends AbstractMealController {
     }
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public Meal create(@RequestBody Meal meal) {
-        return super.create(meal);
+    public ResponseEntity<Meal> create1(@RequestBody Meal meal) {
+        Meal meal1 = super.create(meal);
+        URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path(REST_URL + "/{id}")
+                .buildAndExpand(meal1.getId()).toUri();
+        return ResponseEntity.created(uriOfNewResource).body(meal1);
+//        return super.create(meal);
     }
 
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
