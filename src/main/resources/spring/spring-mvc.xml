@@ -10,7 +10,8 @@
     <bean id="conversionService" class="org.springframework.format.support.FormattingConversionServiceFactoryBean">
         <property name="formatters">
             <set>
-                <ref bean="annotationFactory"/>
+                <ref bean="timeAnnotationFactory"/>
+                <ref bean="dateAnnotationFactory"/>
             </set>
         </property>
     </bean>

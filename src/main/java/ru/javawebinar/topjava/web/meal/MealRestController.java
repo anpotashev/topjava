@@ -7,12 +7,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.to.MealWithExceed;
-import ru.javawebinar.topjava.web.formatter.LocalDateOrLocalTime;
+import ru.javawebinar.topjava.web.formatter.ALocalDate;
+import ru.javawebinar.topjava.web.formatter.ALocalTime;
 
 import java.net.URI;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
 
 @RestController
@@ -52,8 +50,8 @@ public class MealRestController extends AbstractMealController {
 
     @GetMapping(value = "/filter")
     public List<MealWithExceed> getBetween(
-            @RequestParam("startDateTime") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDateTime,
-            @RequestParam("endDateTime") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDateTime) {
+            @RequestParam("startDateTime") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) java.time.LocalDateTime startDateTime,
+            @RequestParam("endDateTime") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) java.time.LocalDateTime endDateTime) {
         return super.getBetween(
                 startDateTime.toLocalDate()
                 , startDateTime.toLocalTime()
@@ -64,10 +62,10 @@ public class MealRestController extends AbstractMealController {
 
     @GetMapping(value = "/filter2")
     public List<MealWithExceed> getBetween(
-            @RequestParam(value = "startDate", required = false) @LocalDateOrLocalTime LocalDate startDate
-            , @RequestParam(value = "startTime", required = false) @LocalDateOrLocalTime(type = LocalDateOrLocalTime.Type.TIME) LocalTime startTime
-            , @RequestParam(value = "endDate", required = false) @LocalDateOrLocalTime LocalDate endDate
-            , @RequestParam(value = "endTime", required = false) @LocalDateOrLocalTime(type = LocalDateOrLocalTime.Type.TIME) LocalTime endTime
+            @RequestParam(value = "startDate") @ALocalDate java.time.LocalDate startDate
+            , @RequestParam(value = "startTime") @ALocalTime java.time.LocalTime startTime
+            , @RequestParam(value = "endDate") @ALocalDate java.time.LocalDate endDate
+            , @RequestParam(value = "endTime") @ALocalTime java.time.LocalTime endTime
     ) {
         return super.getBetween(startDate, startTime, endDate, endTime);
     }

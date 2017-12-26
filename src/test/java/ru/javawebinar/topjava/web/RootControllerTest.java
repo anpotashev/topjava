@@ -1,8 +1,8 @@
 package ru.javawebinar.topjava.web;
 
-import org.hamcrest.Matcher;
 import org.junit.Test;
-import ru.javawebinar.topjava.model.Meal;
+import org.springframework.test.web.servlet.ResultActions;
+import ru.javawebinar.topjava.MealTestData;
 
 import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -32,30 +32,19 @@ public class RootControllerTest extends AbstractControllerTest {
 
     @Test
     public void testMeals() throws Exception {
-        mockMvc.perform(get("/meals"))
+        ResultActions resultActions = mockMvc.perform(get("/meals"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(view().name("meals"))
-                .andExpect(forwardedUrl("/WEB-INF/jsp/meals.jsp"))
-                .andExpect(model().attribute("meals", hasSize(6)))
-                .andExpect(model().attribute("meals", hasItems(
-                        mealMatcher(MEAL1, false)
-                        , mealMatcher(MEAL2, false)
-                        , mealMatcher(MEAL3, false)
-                        , mealMatcher(MEAL4, true)
-                        , mealMatcher(MEAL5, true)
-                        , mealMatcher(MEAL6, true)
-                )))
-        ;
+                .andExpect(forwardedUrl("/WEB-INF/jsp/meals.jsp"));
+        MealTestData.compareWithMeals(resultActions, USER
+                , MEAL1
+                , MEAL2
+                , MEAL3
+                , MEAL4
+                , MEAL5
+                , MEAL6
+                );
     }
 
-    private static Matcher mealMatcher(Meal meal, boolean exceed) {
-        return allOf(
-                hasProperty("id", is(meal.getId()))
-                , hasProperty("description", is(meal.getDescription()))
-                , hasProperty("dateTime", is(meal.getDateTime()))
-                , hasProperty("calories", is(meal.getCalories()))
-                , hasProperty("exceed", is(exceed))
-        );
-    }
 }

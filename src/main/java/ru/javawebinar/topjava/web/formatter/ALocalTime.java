@@ -7,13 +7,5 @@ import java.lang.annotation.Target;
 
 @Target({ElementType.PARAMETER, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface LocalDateOrLocalTime {
-
-    Type type() default Type.DATE;
-
-    enum Type {
-        DATE,
-        TIME
-    }
-
+public @interface ALocalTime {
 }

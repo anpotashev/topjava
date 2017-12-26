@@ -18,12 +18,12 @@
 
     <context:component-scan base-package="ru.javawebinar.**.service"/>
 
-    <bean id="dateFormatter" class="java.time.format.DateTimeFormatter" factory-method="ofPattern">
-        <constructor-arg name="pattern" value="dd.MM.yyyy"/>
-    </bean>
+    <!--<bean id="dateFormatter" class="java.time.format.DateTimeFormatter" factory-method="ofPattern">-->
+    <!--<constructor-arg name="pattern" value="dd.MM.yyyy"/>-->
+    <!--</bean>-->
 
-    <bean id="timeFormatter" class="java.time.format.DateTimeFormatter" factory-method="ofPattern">
-        <constructor-arg name="pattern" value="HH:mm"/>
-    </bean>
+    <!--<bean id="timeFormatter" class="java.time.format.DateTimeFormatter" factory-method="ofPattern">-->
+    <!--<constructor-arg name="pattern" value="HH:mm"/>-->
+    <!--</bean>-->
 
 </beans>

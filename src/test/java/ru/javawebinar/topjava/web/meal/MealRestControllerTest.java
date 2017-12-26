@@ -8,8 +8,7 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import ru.javawebinar.topjava.MealTestData;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.web.AbstractControllerTest;
-import ru.javawebinar.topjava.web.formatter.LocalDateFormatter;
-import ru.javawebinar.topjava.web.formatter.LocalTimeFormatter;
+import ru.javawebinar.topjava.web.formatter.AbstractLocalDateTimeAnnotationFactory;
 import ru.javawebinar.topjava.web.json.JsonUtil;
 
 import java.time.LocalDate;
@@ -22,24 +21,24 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static ru.javawebinar.topjava.MealTestData.*;
+import static ru.javawebinar.topjava.TestUtil.contentJson;
 
 public class MealRestControllerTest extends AbstractControllerTest {
 
     private static final String URL = MealRestController.REST_URL + "/";
 
-//    @LocalDateOrLocalTime
     private final LocalDate START_DATE = LocalDate.of(2015, 05, 30);
-//    @LocalDateOrLocalTime(type = LocalDateOrLocalTime.Type.TIME)
+
     private final LocalTime START_TIME = LocalTime.of(9, 0);
-//    @LocalDateOrLocalTime
+
     private final LocalDate END_DATE = LocalDate.of(2015, 05, 30);
-//    @LocalDateOrLocalTime(type = LocalDateOrLocalTime.Type.TIME)
+
     private final LocalTime END_TIME = LocalTime.of(11, 0);
 
     @Autowired
-    private LocalDateFormatter dateFormatter;
+    private AbstractLocalDateTimeAnnotationFactory.LocalDateFormatter dateFormatter;
     @Autowired
-    private LocalTimeFormatter timeFormatter;
+    private AbstractLocalDateTimeAnnotationFactory.LocalTimeFormatter timeFormatter;
 
     @Test
     public void getTest() throws Exception {
@@ -186,24 +185,14 @@ public class MealRestControllerTest extends AbstractControllerTest {
                 ;
     }
 
-    private MockHttpServletRequestBuilder addParam(MockHttpServletRequestBuilder builder, String paramName, Object param) {
-        if (param != null) {
-            builder.param(paramName, format(param));
-        }
-        return builder;
+    private MockHttpServletRequestBuilder addParam(MockHttpServletRequestBuilder builder, String paramName, LocalDate date) {
+        String value = dateFormatter.print(date, Locale.getDefault());
+        return builder.param(paramName, value);
     }
 
-    private String format(Object dateOrTime) {
-
-        if (dateOrTime instanceof LocalDate) {
-            LocalDate date = (LocalDate) dateOrTime;
-            return dateFormatter.print(date, Locale.getDefault());
-        }
-        if (dateOrTime instanceof LocalTime) {
-            LocalTime time = (LocalTime) dateOrTime;
-            return timeFormatter.print(time, Locale.getDefault());
-        }
-        throw new UnsupportedOperationException("Only localdate or localtime");
+    private MockHttpServletRequestBuilder addParam(MockHttpServletRequestBuilder builder, String paramName, LocalTime time) {
+        String value = timeFormatter.print(time, Locale.getDefault());
+        return builder.param(paramName, value);
     }
 
 }
