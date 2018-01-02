@@ -40,3 +40,18 @@ $(function () {
     });
     makeEditable();
 });
+
+changeUserState = function (elem) {
+    var userId = $(elem).parent().parent().attr("id");
+    var state = $(elem).is(':checked');
+    var data = "state=" + state;
+    $.ajax({
+        url: ajaxUrl + userId//+ "?" + data
+        , type: "PUT"
+        , data: data
+        , success: function () {
+            updateTable();
+            successNoty("changed");
+        }
+    });
+}

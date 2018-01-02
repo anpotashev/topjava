@@ -48,6 +48,16 @@
     </filter-mapping>
 
     <filter>
+        <filter-name>putFilter</filter-name>
+        <filter-class>org.springframework.web.filter.HttpPutFormContentFilter</filter-class>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>putFilter</filter-name>
+        <url-pattern>/ajax/admin/users/*</url-pattern>
+    </filter-mapping>
+
+    <filter>
         <filter-name>encodingFilter</filter-name>
         <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
         <init-param>

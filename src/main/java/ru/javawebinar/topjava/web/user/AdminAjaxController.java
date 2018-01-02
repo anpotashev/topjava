@@ -1,15 +1,20 @@
 package ru.javawebinar.topjava.web.user;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
+import ru.javawebinar.topjava.service.UserService;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/ajax/admin/users")
 public class AdminAjaxController extends AbstractUserController {
+
+    @Autowired
+    private UserService service;
 
     @Override
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
@@ -33,5 +38,14 @@ public class AdminAjaxController extends AbstractUserController {
         if (user.isNew()) {
             super.create(user);
         }
+    }
+
+    @PutMapping(value = "/{id}")
+    public void setUserState(@PathVariable("id") int id
+            , @RequestParam("state") boolean state
+
+    ) {
+        log.info("userId: {} new state {}", id, state);
+        service.changeState(id, state);
     }
 }
