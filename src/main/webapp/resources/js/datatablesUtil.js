@@ -32,11 +32,6 @@ function deleteRow(id) {
     });
 }
 
-function updateTable() {
-    $.get(ajaxUrl, function (data) {
-        datatableApi.clear().rows.add(data).draw();
-    });
-}
 
 function save() {
     var form = $("#detailsForm");
@@ -81,13 +76,13 @@ function failNoty(jqXHR) {
 }
 
 showDateTimePicker = function (elem) {
-    $(elem).datetimepicker({format: 'Y-m-d H:i'})
+    $(elem).datetimepicker({format: 'Y-m-d H:i'});
 }
 
 showTimePicker = function (elem) {
-    $(elem).datetimepicker({format: 'H:i', datepicker: false})
+    $(elem).datetimepicker({format: 'H:i', datepicker: false});
 }
 
 showDatePicker = function (elem) {
-    $(elem).datetimepicker({format: 'Y-m-d', timepicker: false})
+    $(elem).datetimepicker({format: 'Y-m-d', timepicker: false});
 }

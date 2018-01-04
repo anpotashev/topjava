@@ -1,5 +1,6 @@
 var ajaxUrl = "ajax/meals/";
 var datatableApi;
+var filtered = false;
 
 // $(document).ready(function () {
 $(function () {
@@ -28,7 +29,7 @@ $(function () {
         "order": [
             [
                 0,
-                "asc"
+                "desc"
             ]
         ]
     });
@@ -36,14 +37,34 @@ $(function () {
 
 });
 
+function updateTable() {
+    if (filtered) {
+        updateTableWithFiter();
+    } else {
+        updateTableWithoutFilter();
+    }
+}
+
 
 clearFilter = function () {
     $("#filterForm").find(":input").val("");
-    setFilter();
+    filtered = false;
+    updateTable();
 }
 
 setFilter = function () {
-    updateTable = setFilter;
+    filtered = true;
+    updateTable();
+
+}
+
+updateTableWithoutFilter = function () {
+    $.get(ajaxUrl, function (data) {
+        datatableApi.clear().rows.add(data).draw();
+    });
+}
+
+updateTableWithFiter = function () {
     var form = $("#filterForm");
     $.ajax({
         type: "GET",

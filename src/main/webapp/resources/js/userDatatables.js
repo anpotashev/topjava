@@ -46,12 +46,18 @@ changeUserState = function (elem) {
     var state = $(elem).is(':checked');
     var data = "state=" + state;
     $.ajax({
-        url: ajaxUrl + userId//+ "?" + data
+        url: ajaxUrl + userId
         , type: "PUT"
         , data: data
         , success: function () {
-            updateTable();
+            $(elem).parent().parent().toggleClass("disabled");
             successNoty("changed");
         }
+    });
+}
+
+function updateTable() {
+    $.get(ajaxUrl, function (data) {
+        datatableApi.clear().rows.add(data).draw();
     });
 }
