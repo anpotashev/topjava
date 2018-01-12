@@ -16,11 +16,23 @@ function add() {
     $("#editRow").modal();
 }
 
+
+formatdt = function (data) {
+    return data.replace('T', ' ').substr(0,16)
+}
+
+frm = function (key, value) {
+    if (key === "dateTime") {
+        return formatdt(value);
+    }
+    return value;
+}
+
 function updateRow(id) {
     $("#modalTitle").html(i18n["editTitle"]);
     $.get(ajaxUrl + id, function (data) {
         $.each(data, function (key, value) {
-            form.find("input[name='" + key + "']").val(value);
+            form.find("input[name='" + key + "']").val(frm(key, value));
         });
         $('#editRow').modal();
     });
