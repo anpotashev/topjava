@@ -10,6 +10,8 @@ import org.springframework.core.annotation.Order;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindException;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,6 +22,7 @@ import ru.javawebinar.topjava.util.exception.ErrorType;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 import java.util.Locale;
 import java.util.StringJoiner;
 
@@ -54,18 +57,29 @@ public class ExceptionInfoHandler {
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
     @ExceptionHandler(BindException.class)
     public ErrorInfo validation(HttpServletRequest req, BindException exception) {
+        String msg = errorMessage(exception.getFieldErrors());
+        return new ErrorInfo(req.getRequestURL(), ErrorType.DATA_ERROR, msg);
+    }
+
+    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ErrorInfo validation4REST(HttpServletRequest req, MethodArgumentNotValidException exception) {
+        String msg = errorMessage(exception.getBindingResult().getFieldErrors());
+        return new ErrorInfo(req.getRequestURL(), ErrorType.DATA_ERROR, msg);
+    }
+
+    private String errorMessage(List<FieldError> errors) {
         StringJoiner joiner = new StringJoiner("<br>");
         Locale locale = LocaleContextHolder.getLocale();
-        exception.getFieldErrors().forEach(fe -> {
-                    String msg = messageSource.getMessage(fe, locale);
-                    String field = messageSource.getMessage("field." + fe.getField(), null, locale);
-                    msg = field + ' ' + msg;
-                    joiner.add(msg);
-                }
-        );
-
-        return new ErrorInfo(req.getRequestURL(), ErrorType.DATA_ERROR, joiner.toString());
+        errors.forEach(fe -> {
+            String msg = messageSource.getMessage(fe, locale);
+            String field = messageSource.getMessage("field." + fe.getField(), null, locale);
+            msg = field + ' ' + msg;
+            joiner.add(msg);
+        });
+        return joiner.toString();
     }
+
 
     private static ErrorInfo logAndGetErrorInfo(HttpServletRequest req, Exception e, boolean logException, ErrorType errorType) {
         Throwable rootCause = ValidationUtil.getRootCause(e);

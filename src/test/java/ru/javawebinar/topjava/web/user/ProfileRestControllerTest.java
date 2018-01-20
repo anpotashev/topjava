@@ -56,4 +56,15 @@ public class ProfileRestControllerTest extends AbstractControllerTest {
 
         assertMatch(userService.getByEmail("newemail@ya.ru"), UserUtil.updateFromTo(new User(USER), updatedTo));
     }
+
+    @Test
+    public void testUpdateWithIncorrectData() throws Exception {
+        UserTo withTooSiplePassword = new UserTo(null, "newName", "newemail@ya.ru", "1", 1500);
+
+        mockMvc.perform(put(REST_URL).contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(USER))
+                .content(JsonUtil.writeValue(withTooSiplePassword)))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity());
+    }
 }
