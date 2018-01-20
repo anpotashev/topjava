@@ -5,9 +5,11 @@
 <%@ attribute name="name" required="true" description="Name of corresponding property in bean object" %>
 <%@ attribute name="label" required="true" description="Field label" %>
 <%@ attribute name="inputType" required="false" description="Input type" %>
+<%@ attribute name="isDuplicateError" required="false" description="True if There is a duplicate field" %>
+<%@ attribute name="isDuplicateErrorMessage" required="false" description="Error message if there is a duplicate" %>
 
 <spring:bind path="${name}">
-    <div class="form-group ${status.error ? 'error' : '' }">
+    <div class="form-group ${(status.error or isDuplicateError)? 'error' : '' }">
         <label class="control-label col-sm-2">${label}</label>
 
         <div class="col-sm-3">
@@ -19,6 +21,7 @@
         </div>
         <div class="col-sm-7">
             <span class="help-inline">${status.errorMessage}</span>
+            <span class="help-inline">${isDuplicateErrorMessage}</span>
         </div>
     </div>
 </spring:bind>

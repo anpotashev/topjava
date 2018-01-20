@@ -45,6 +45,11 @@ public class ExceptionInfoHandler {
     @ResponseStatus(value = HttpStatus.CONFLICT)  // 409
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ErrorInfo conflict(HttpServletRequest req, DataIntegrityViolationException e) {
+        String msgCode = ValidationUtil.parseDataIntegrityViolationExceptionAndReturnUniqueIdx(e).getMsgCode();
+        if (msgCode != null) {
+            String msg = messageSource.getMessage(msgCode, null, LocaleContextHolder.getLocale());
+            return new ErrorInfo(req.getRequestURL(), ErrorType.DATA_ERROR, msg);
+        }
         return logAndGetErrorInfo(req, e, true, ErrorType.DATA_ERROR);
     }
 
