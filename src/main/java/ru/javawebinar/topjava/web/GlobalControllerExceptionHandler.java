@@ -43,6 +43,7 @@ public class GlobalControllerExceptionHandler {
 
         Unique_idx idx = parseDataIntegrityViolationExceptionAndReturnUniqueIdx(e);
         ModelAndView modelAndView = new ModelAndView("profile");
+//        req.getLocale().getISO3Country()
         switch(idx) {
             case USER_EMAIL:
                 modelAndView.setViewName("profile");
