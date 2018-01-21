@@ -4,6 +4,8 @@ import org.junit.Test;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import ru.javawebinar.topjava.TestUtil;
 import ru.javawebinar.topjava.UserTestData;
 import ru.javawebinar.topjava.model.Role;
@@ -140,6 +142,7 @@ public class AdminRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
+    @Transactional(propagation = Propagation.NEVER)
     @WithMockUser(authorities = {"ROLE_ADMIN"})
     public void testCreateWithDuplicateEmail() throws Exception {
         User withDuplicateEmail = new User(null, "New", "admin@gmail.com", "11111111", 2300, Role.ROLE_USER, Role.ROLE_ADMIN);
@@ -157,6 +160,7 @@ public class AdminRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
+    @Transactional(propagation = Propagation.NEVER)
     @WithMockUser(authorities = {"ROLE_ADMIN"})
     public void testUpdateWithDuplicateEmail() throws Exception {
         UserTo withDuplicateEmail = new UserTo(null, "newName", "admin@gmail.com", "password", 1500);

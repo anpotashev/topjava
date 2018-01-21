@@ -4,6 +4,8 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import ru.javawebinar.topjava.TestUtil;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.service.MealService;
@@ -99,6 +101,7 @@ public class MealRestControllerTest extends AbstractControllerTest {
 
 
     @Test
+    @Transactional(propagation = Propagation.NEVER)
     public void testUpdateWithDuplicateDateTime() throws Exception {
         Meal updated = getUpdated();
         updated.setDateTime(MEAL2.getDateTime());
@@ -144,6 +147,7 @@ public class MealRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
+    @Transactional(propagation = Propagation.NEVER)
     public void testCreateWithDuplicatedDateTime() throws Exception {
         Meal created = getCreated();
         created.setDateTime(MEAL1.getDateTime());
@@ -153,7 +157,7 @@ public class MealRestControllerTest extends AbstractControllerTest {
                 .with(userHttpBasic(USER)))
                 .andExpect(status().isConflict())
                 .andExpect(content().string(containsString("Meal for this datetime already exists")))
-                ;
+        ;
     }
 
     @Test
