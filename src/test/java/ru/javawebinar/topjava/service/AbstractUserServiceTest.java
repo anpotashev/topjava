@@ -6,6 +6,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DataIntegrityViolationException;
 import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
@@ -27,6 +28,22 @@ public abstract class AbstractUserServiceTest extends AbstractServiceTest {
     @Before
     public void setUp() throws Exception {
         cacheManager.getCache("users").clear();
+    }
+
+    @Test
+    public void createWithDuplicateEmail() throws Exception {
+        User newUser = new User(null, "New", "admin@gmail.com", "newPass", 1555, false, new Date(), Collections.singleton(Role.ROLE_USER));
+        thrown.expect(DataIntegrityViolationException.class);
+        service.create(newUser);
+    }
+
+    @Test
+
+    public void updateWithDuplicateEmail() throws Exception {
+        User updated = new User(USER);
+        updated.setEmail(ADMIN.getEmail());
+        thrown.expect(DataIntegrityViolationException.class);
+        service.update(updated);
     }
 
     @Test

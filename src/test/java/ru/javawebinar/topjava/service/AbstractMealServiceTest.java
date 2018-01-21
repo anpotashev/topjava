@@ -3,6 +3,7 @@ package ru.javawebinar.topjava.service;
 import org.junit.Assume;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
@@ -19,6 +20,22 @@ public abstract class AbstractMealServiceTest extends AbstractServiceTest {
 
     @Autowired
     protected MealService service;
+
+    @Test
+    public void createWithDuplicateDateTime() throws Exception {
+        Meal created = getCreated();
+        created.setDateTime(MEAL1.getDateTime());
+        thrown.expect(DataIntegrityViolationException.class);
+        service.create(created, USER_ID);
+    }
+
+    @Test
+    public void updateWithDuplicateDateTime() throws Exception {
+        Meal updated = getUpdated();
+        updated.setDateTime(MEAL2.getDateTime());
+        thrown.expect(DataIntegrityViolationException.class);
+        service.update(updated, USER_ID);
+    }
 
     @Test
     public void delete() throws Exception {

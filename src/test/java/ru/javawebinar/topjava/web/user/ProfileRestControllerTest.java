@@ -9,6 +9,7 @@ import ru.javawebinar.topjava.util.UserUtil;
 import ru.javawebinar.topjava.web.AbstractControllerTest;
 import ru.javawebinar.topjava.web.json.JsonUtil;
 
+import static org.hamcrest.Matchers.containsString;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -66,5 +67,19 @@ public class ProfileRestControllerTest extends AbstractControllerTest {
                 .content(JsonUtil.writeValue(withTooSiplePassword)))
                 .andDo(print())
                 .andExpect(status().isUnprocessableEntity());
+    }
+
+
+    @Test
+    public void testUpdateWithDuplicateEmail() throws Exception {
+        UserTo withDuplicateEmail = new UserTo(null, "newName", "admin@gmail.com", "password", 1500);
+
+        mockMvc.perform(put(REST_URL).contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(USER))
+                .content(JsonUtil.writeValue(withDuplicateEmail)))
+                .andDo(print())
+                .andExpect(status().isConflict())
+                .andExpect(content().string(containsString("Such Email already exists")))
+        ;
     }
 }
