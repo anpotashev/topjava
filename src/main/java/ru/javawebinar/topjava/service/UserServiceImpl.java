@@ -13,6 +13,7 @@ import ru.javawebinar.topjava.AuthorizedUser;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.UserRepository;
 import ru.javawebinar.topjava.to.UserTo;
+import ru.javawebinar.topjava.util.aop.CheckForDataIntegrityViolationException;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import java.util.List;
@@ -34,7 +35,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         this.passwordEncoder = passwordEncoder;
     }
 
-
+    @CheckForDataIntegrityViolationException(msgCode = "duplicate.users_unique_email_idx", creating = true)
     @CacheEvict(value = "users", allEntries = true)
     @Override
     public User create(User user) {
@@ -65,6 +66,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         return repository.getAll();
     }
 
+    @CheckForDataIntegrityViolationException(msgCode = "duplicate.users_unique_email_idx")
     @CacheEvict(value = "users", allEntries = true)
     @Override
     public void update(User user) {
@@ -72,10 +74,15 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         checkNotFoundWithId(repository.save(prepareToSave(user, passwordEncoder)), user.getId());
     }
 
+    @CheckForDataIntegrityViolationException(msgCode = "duplicate.users_unique_email_idx")
     @CacheEvict(value = "users", allEntries = true)
-    @Transactional
     @Override
     public void update(UserTo userTo) {
+        updateUserTo(userTo); // to get a DataIntegrityViolationException
+    }
+
+    @Transactional
+    protected void updateUserTo(UserTo userTo) {
         User user = updateFromTo(get(userTo.getId()), userTo);
         repository.save(prepareToSave(user, passwordEncoder));
     }

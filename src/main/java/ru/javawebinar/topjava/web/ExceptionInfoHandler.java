@@ -7,7 +7,6 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
@@ -17,6 +16,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.javawebinar.topjava.util.ValidationUtil;
+import ru.javawebinar.topjava.util.aop.DuplicateFieldException;
 import ru.javawebinar.topjava.util.exception.ErrorInfo;
 import ru.javawebinar.topjava.util.exception.ErrorType;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
@@ -43,14 +43,9 @@ public class ExceptionInfoHandler {
     }
 
     @ResponseStatus(value = HttpStatus.CONFLICT)  // 409
-    @ExceptionHandler(DataIntegrityViolationException.class)
-    public ErrorInfo conflict(HttpServletRequest req, DataIntegrityViolationException e) {
-        String msgCode = ValidationUtil.parseDataIntegrityViolationExceptionAndReturnUniqueIdx(e).getMsgCode();
-        if (msgCode != null) {
-            String msg = messageSource.getMessage(msgCode, null, LocaleContextHolder.getLocale());
-            return new ErrorInfo(req.getRequestURL(), ErrorType.DATA_ERROR, msg);
-        }
-        return logAndGetErrorInfo(req, e, true, ErrorType.DATA_ERROR);
+    @ExceptionHandler(DuplicateFieldException.class)
+    public ErrorInfo conflict(HttpServletRequest req, DuplicateFieldException e) {
+        return new ErrorInfo(req.getRequestURL(), ErrorType.DATA_ERROR, messageSource.getMessage(e.getMsgCode(), null, req.getLocale()));
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)

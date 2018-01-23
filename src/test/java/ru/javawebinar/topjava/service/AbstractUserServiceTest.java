@@ -5,10 +5,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
-import org.springframework.dao.DataAccessException;
-import org.springframework.dao.DataIntegrityViolationException;
 import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
+import ru.javawebinar.topjava.util.aop.DuplicateFieldException;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import java.util.Collections;
@@ -33,7 +32,7 @@ public abstract class AbstractUserServiceTest extends AbstractServiceTest {
     @Test
     public void createWithDuplicateEmail() throws Exception {
         User newUser = new User(null, "New", "admin@gmail.com", "newPass", 1555, false, new Date(), Collections.singleton(Role.ROLE_USER));
-        thrown.expect(DataIntegrityViolationException.class);
+        thrown.expect(DuplicateFieldException.class);
         service.create(newUser);
     }
 
@@ -42,7 +41,7 @@ public abstract class AbstractUserServiceTest extends AbstractServiceTest {
     public void updateWithDuplicateEmail() throws Exception {
         User updated = new User(USER);
         updated.setEmail(ADMIN.getEmail());
-        thrown.expect(DataIntegrityViolationException.class);
+        thrown.expect(DuplicateFieldException.class);
         service.update(updated);
     }
 
@@ -54,7 +53,7 @@ public abstract class AbstractUserServiceTest extends AbstractServiceTest {
         assertMatch(service.getAll(), ADMIN, newUser, USER);
     }
 
-    @Test(expected = DataAccessException.class)
+    @Test(expected = DuplicateFieldException.class)
     public void duplicateMailCreate() throws Exception {
         service.create(new User(null, "Duplicate", "user@yandex.ru", "newPass", 2000, Role.ROLE_USER));
     }

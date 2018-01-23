@@ -23,8 +23,8 @@
 
             <spring:message code="user.email" var="userEmail"/>
 
-            <topjava:inputField label='${userEmail}' name="email" isDuplicateError="${not empty hasduplicateerror}"
-                                isDuplicateErrorMessage="${not empty hasduplicateerror ? duplicateErrorMessage : '' }"/>
+            <topjava:inputField label='${userEmail}' name="email" isDuplicateError="${not empty hasDuplicateError}"
+                                isDuplicateErrorMessage="${not empty hasDuplicateError ? duplicateErrorMessage : '' }"/>
 
             <spring:message code="user.password" var="userPassword"/>
             <topjava:inputField label='${userPassword}' name="password" inputType="password"/>

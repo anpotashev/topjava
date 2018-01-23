@@ -4,17 +4,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.ModelAndView;
 import ru.javawebinar.topjava.AuthorizedUser;
+import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.to.UserTo;
+import ru.javawebinar.topjava.util.aop.DuplicateFieldException;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
-import static ru.javawebinar.topjava.util.ValidationUtil.*;
+import static ru.javawebinar.topjava.util.UserUtil.asTo;
+import static ru.javawebinar.topjava.util.ValidationUtil.getRootCause;
 
 @ControllerAdvice
 public class GlobalControllerExceptionHandler {
@@ -38,31 +39,15 @@ public class GlobalControllerExceptionHandler {
         return mav;
     }
 
-    @ExceptionHandler(DataIntegrityViolationException.class)
-    public ModelAndView DataIntegrityViolationExceptionHandler(HttpServletRequest req, HttpServletResponse res, DataIntegrityViolationException e) throws Exception {
 
-        Unique_idx idx = parseDataIntegrityViolationExceptionAndReturnUniqueIdx(e);
+    @ExceptionHandler({DuplicateFieldException.class})
+    public ModelAndView duplicateFieldExceptionHandler(HttpServletRequest req, DuplicateFieldException ex) {
         ModelAndView modelAndView = new ModelAndView("profile");
-//        req.getLocale().getISO3Country()
-        switch(idx) {
-            case USER_EMAIL:
-                modelAndView.setViewName("profile");
-                UserTo userTo = new UserTo();
-                userTo.setName(req.getParameter("name"));
-                userTo.setEmail(req.getParameter("email"));
-                userTo.setCaloriesPerDay(Integer.parseInt(req.getParameter("caloriesPerDay")));
-                modelAndView.addObject("userTo", userTo);
-
-                if (req.getRequestURI().equals("/register")) {
-                    modelAndView.addObject("register", true);
-                }
-                break;
-            case MEAL_DATETIME:
-                break; // meals creating and updating work over ajax
-        }
-
-        modelAndView.addObject("hasduplicateerror", true);
-        modelAndView.addObject("duplicateErrorMessage", messageSource.getMessage(idx.getMsgCode(), null, req.getLocale()));
+        UserTo userTo = (ex.getWrongData() instanceof UserTo) ? (UserTo) ex.getWrongData() : asTo((User) ex.getWrongData());
+        modelAndView.addObject("userTo", userTo);
+        modelAndView.addObject("register", ex.isCreating());
+        modelAndView.addObject("hasDuplicateError", true);
+        modelAndView.addObject("duplicateErrorMessage", messageSource.getMessage(ex.getMsgCode(), null, req.getLocale()));
         return modelAndView;
     }
 

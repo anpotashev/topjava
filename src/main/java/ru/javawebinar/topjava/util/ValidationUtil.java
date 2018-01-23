@@ -1,6 +1,5 @@
 package ru.javawebinar.topjava.util;
 
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -72,33 +71,4 @@ public class ValidationUtil {
         return new ResponseEntity<>(joiner.toString(), HttpStatus.UNPROCESSABLE_ENTITY);
     }
 
-
-    public static Unique_idx parseDataIntegrityViolationExceptionAndReturnUniqueIdx(DataIntegrityViolationException ex) {
-        String message = ValidationUtil.getRootCause(ex).getMessage();
-        Unique_idx idx = Unique_idx.find(message);
-        return idx;
-    }
-
-    public enum Unique_idx {
-        USER_EMAIL("users_unique_email_idx")
-        , MEAL_DATETIME("meals_unique_user_datetime_idx");
-        String indexName;
-        String msgCode;
-
-        public String getMsgCode() {
-            return msgCode;
-        }
-        Unique_idx(String indexName){
-            this.indexName = indexName;
-            msgCode = "duplicate."+indexName;
-        }
-        static Unique_idx find(String  str) {
-            for (Unique_idx idx : Unique_idx.values()) {
-                if (str.contains(idx.indexName)) {
-                    return idx;
-                }
-            }
-            return null;
-        }
-    }
 }

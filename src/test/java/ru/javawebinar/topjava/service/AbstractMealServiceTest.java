@@ -3,8 +3,8 @@ package ru.javawebinar.topjava.service;
 import org.junit.Assume;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import ru.javawebinar.topjava.model.Meal;
+import ru.javawebinar.topjava.util.aop.DuplicateFieldException;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import javax.validation.ConstraintViolationException;
@@ -25,7 +25,7 @@ public abstract class AbstractMealServiceTest extends AbstractServiceTest {
     public void createWithDuplicateDateTime() throws Exception {
         Meal created = getCreated();
         created.setDateTime(MEAL1.getDateTime());
-        thrown.expect(DataIntegrityViolationException.class);
+        thrown.expect(DuplicateFieldException.class);
         service.create(created, USER_ID);
     }
 
@@ -33,7 +33,7 @@ public abstract class AbstractMealServiceTest extends AbstractServiceTest {
     public void updateWithDuplicateDateTime() throws Exception {
         Meal updated = getUpdated();
         updated.setDateTime(MEAL2.getDateTime());
-        thrown.expect(DataIntegrityViolationException.class);
+        thrown.expect(DuplicateFieldException.class);
         service.update(updated, USER_ID);
     }
 
