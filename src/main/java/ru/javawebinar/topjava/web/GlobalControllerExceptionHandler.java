@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.ModelAndView;
@@ -41,13 +42,13 @@ public class GlobalControllerExceptionHandler {
 
 
     @ExceptionHandler({DuplicateFieldException.class})
-    public ModelAndView duplicateFieldExceptionHandler(HttpServletRequest req, DuplicateFieldException ex) {
+    public ModelAndView duplicateFieldExceptionHandler(DuplicateFieldException ex) {
         ModelAndView modelAndView = new ModelAndView("profile");
         UserTo userTo = (ex.getWrongData() instanceof UserTo) ? (UserTo) ex.getWrongData() : asTo((User) ex.getWrongData());
         modelAndView.addObject("userTo", userTo);
         modelAndView.addObject("register", ex.isCreating());
         modelAndView.addObject("hasDuplicateError", true);
-        modelAndView.addObject("duplicateErrorMessage", messageSource.getMessage(ex.getMsgCode(), null, req.getLocale()));
+        modelAndView.addObject("duplicateErrorMessage", messageSource.getMessage(ex.getMsgCode(), null, LocaleContextHolder.getLocale()));
         return modelAndView;
     }
 

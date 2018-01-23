@@ -45,7 +45,7 @@ public class ExceptionInfoHandler {
     @ResponseStatus(value = HttpStatus.CONFLICT)  // 409
     @ExceptionHandler(DuplicateFieldException.class)
     public ErrorInfo conflict(HttpServletRequest req, DuplicateFieldException e) {
-        return new ErrorInfo(req.getRequestURL(), ErrorType.DATA_ERROR, messageSource.getMessage(e.getMsgCode(), null, req.getLocale()));
+        return new ErrorInfo(req.getRequestURL(), ErrorType.DATA_ERROR, messageSource.getMessage(e.getMsgCode(), null, LocaleContextHolder.getLocale()));
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
